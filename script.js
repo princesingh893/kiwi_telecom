@@ -38,3 +38,29 @@ window.addEventListener("resize", () => {
     setMenuWidth();
   }
 });
+
+// ---------------- Slider ---------------- //
+const slides = document.getElementById('slides');
+const totalSlides = slides.children.length;
+let index = 0;
+
+function showSlide(i) {
+  slides.style.transform = `translateX(-${i * 100}%)`;
+}
+
+// Next/Prev Buttons
+document.getElementById('next').addEventListener('click', () => {
+  index = (index + 1) % totalSlides;
+  showSlide(index);
+});
+
+document.getElementById('prev').addEventListener('click', () => {
+  index = (index - 1 + totalSlides) % totalSlides;
+  showSlide(index);
+});
+
+// Auto play every 3 seconds
+setInterval(() => {
+  index = (index + 1) % totalSlides;
+  showSlide(index);
+}, 3000);
