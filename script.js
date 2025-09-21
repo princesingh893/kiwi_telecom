@@ -4,11 +4,18 @@ const closeMenu = document.getElementById("closeMenu");
 const sideMenu = document.getElementById("sideMenu");
 const overlay = document.getElementById("overlay");
 
+// Function to set menu width based on screen size
+function setMenuWidth() {
+  if (window.innerWidth <= 500) {
+    sideMenu.style.width = "100%";
+  } else {
+    sideMenu.style.width = (window.innerWidth - 50) + "px";
+  }
+}
+
 // Open menu
 menuBtn?.addEventListener("click", () => {
-  // set width = screen width - 50px
-  sideMenu.style.width = (window.innerWidth) + "px";
-
+  setMenuWidth();
   sideMenu.classList.remove("-translate-x-full");
   overlay.classList.remove("hidden");
 });
@@ -28,6 +35,6 @@ overlay?.addEventListener("click", () => {
 // Update width on window resize
 window.addEventListener("resize", () => {
   if (!sideMenu.classList.contains("-translate-x-full")) {
-    sideMenu.style.width = (window.innerWidth) + "px";
+    setMenuWidth();
   }
 });
