@@ -7,7 +7,7 @@ const overlay = document.getElementById("overlay");
 // Open menu
 menuBtn?.addEventListener("click", () => {
   // set width = screen width - 50px
-  sideMenu.style.width = (window.innerWidth - 50) + "px";
+  sideMenu.style.width = (window.innerWidth) + "px";
 
   sideMenu.classList.remove("-translate-x-full");
   overlay.classList.remove("hidden");
