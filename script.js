@@ -28,6 +28,6 @@ overlay?.addEventListener("click", () => {
 // Update width on window resize
 window.addEventListener("resize", () => {
   if (!sideMenu.classList.contains("-translate-x-full")) {
-    sideMenu.style.width = (window.innerWidth - 50) + "px";
+    sideMenu.style.width = (window.innerWidth) + "px";
   }
 });
