@@ -8,6 +8,89 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Custom scrollbar for horizontal scroll */
+    .hide-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+      scroll-behavior: smooth;
+      cursor: grab;
+    }
+    
+    .hide-scrollbar:active {
+      cursor: grabbing;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+      height: 8px;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+      margin: 0 2rem;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb {
+      background: #9ca3af;
+      border-radius: 4px;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+    
+    /* Snap scrolling for product cards */
+    .snap-x {
+      scroll-snap-type: x mandatory;
+    }
+    
+    .snap-start {
+      scroll-snap-align: start;
+    }
+    
+    /* Smooth transitions for hover effects */
+    .transition-all {
+      transition: all 0.3s ease;
+    }
+    
+    /* Navigation buttons */
+    .scroll-button {
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    
+    .scroll-button:active {
+      transform: scale(0.95);
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    /* Hide scrollbar for Firefox */
+    .hide-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #888 #f1f1f1;
+    }
+    
+    /* Hide scroll buttons initially */
+    .scroll-left-btn,
+    .scroll-right-btn {
+      visibility: hidden;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .flex-shrink-0 {
+        width: 220px;
+      }
+    }
+  </style>
   <link rel="stylesheet" href="./src/output.css">
 </head>
 
@@ -17,25 +100,26 @@
     <button id="menuBtn" class="text-3xl hover:text-blue-600 transition">☰</button>
     <img src="logo.png" alt="Logo" class="h-12">
   </header>
-  <div class="relative sm:hidden overflow-hidden  shadow-lg">
+  <div class="relative sm:hidden overflow-hidden shadow-lg h-screen max-h-screen">
     <!-- Slides -->
-    <div class="flex transition-transform duration-700 ease-in-out " id="slides">
+    <div class="flex transition-transform duration-700 ease-in-out h-full" id="slides">
       <img
         src="https://www.shutterstock.com/image-vector/electronics-promotional-shopping-sale-computer-260nw-1190458762.jpg"
-        class="w-full flex-shrink-0" />
+        class="w-full h-full object-cover " />
       <img
         src="https://img.freepik.com/free-vector/gradient-electronic-music-youtube-channel-art_23-2149821230.jpg?semt=ais_incoming&w=740&q=80"
-        class="w-full flex-shrink-0" />
+        class="w-full h-full object-cover " />
       <img
         src="https://img.freepik.com/free-psd/tech-future-banner-template-concept-template_23-2148427301.jpg?semt=ais_hybrid&w=740&q=80"
-        class="w-full flex-shrink-0" />
+        class="w-full h-full object-cover " />
       <img
         src="https://img.freepik.com/free-vector/minimal-technology-twitch-background_23-2149160093.jpg?semt=ais_hybrid&w=740"
-        class="w-full flex-shrink-0" />
+        class="w-full h-full object-cover " />
       <img
         src="https://img.freepik.com/free-vector/technology-future-flyer-square-template_23-2148828557.jpg?semt=ais_hybrid&w=740&q=80"
-        class="w-full flex-shrink-0" />
+        class="w-full h-full object-cover " />
     </div>
+
 
     <!-- Buttons -->
     <button id="prev"
@@ -47,7 +131,122 @@
       &#10095;
     </button>
   </div>
-
+   <!-- Data Cables Section -->
+   <div class="px-4 py-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Data Cables</h2>
+    
+    <div class="relative group">
+      <!-- Scrollable Container -->
+      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
+        <div class="flex space-x-4 px-2" id="dataCablesTrack">
+          <!-- Product Card 1 -->
+          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
+                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
+              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
+              <div class="flex gap-2 w-full mt-auto">
+                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Add to Cart
+                </button>
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Product Card 2 -->
+          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
+                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
+              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
+              <div class="flex gap-2 w-full mt-auto">
+                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Add to Cart
+                </button>
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Product Card 3 -->
+          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
+                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
+              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
+              <div class="flex gap-2 w-full mt-auto">
+                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Add to Cart
+                </button>
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Product Card 4 -->
+          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
+                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
+              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
+              <div class="flex gap-2 w-full mt-auto">
+                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Add to Cart
+                </button>
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Product Card 5 -->
+          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
+                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
+              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
+              <div class="flex gap-2 w-full mt-auto">
+                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Add to Cart
+                </button>
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Navigation Buttons -->
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
+            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
+            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Side Menu -->
   <nav id="sideMenu"
     class="fixed top-0 left-0 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
