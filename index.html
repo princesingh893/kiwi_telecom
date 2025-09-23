@@ -92,20 +92,54 @@
       scrollbar-color: #888 #f1f1f1;
     }
     
-    /* Hide scroll buttons initially */
-    .scroll-left-btn,
-    .scroll-right-btn {
-      visibility: hidden;
-    }
-    
     /* Responsive adjustments */
     @media (max-width: 640px) {
       .flex-shrink-0 {
         width: 220px;
       }
     }
+
+    /* Product section styles */
+    .product-section {
+      position: relative;
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      padding: 8px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .product-section:hover .scroll-btn {
+      opacity: 1;
+    }
+
+    .scroll-btn-left {
+      left: 10px;
+    }
+
+    .scroll-btn-right {
+      right: 10px;
+    }
+
+    .scroll-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .scroll-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
   </style>
-  <link rel="stylesheet" href="./src/output.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-50 text-gray-900 max-w-[1200px] mx-auto font-sans">
@@ -114,26 +148,27 @@
     <button id="menuBtn" class="text-3xl hover:text-blue-600 transition">☰</button>
     <img src="logo.png" alt="Logo" class="h-12">
   </header>
+
+  <!-- Image Slider -->
   <div class="relative sm:hidden overflow-hidden shadow-lg h-screen max-h-screen">
     <!-- Slides -->
     <div class="flex transition-transform duration-700 ease-in-out h-full" id="slides">
       <img
         src="https://www.shutterstock.com/image-vector/electronics-promotional-shopping-sale-computer-260nw-1190458762.jpg"
-        class="w-full h-full object-cover " />
+        class="w-full h-full object-cover" />
       <img
         src="https://img.freepik.com/free-vector/gradient-electronic-music-youtube-channel-art_23-2149821230.jpg?semt=ais_incoming&w=740&q=80"
-        class="w-full h-full object-cover " />
+        class="w-full h-full object-cover" />
       <img
         src="https://img.freepik.com/free-psd/tech-future-banner-template-concept-template_23-2148427301.jpg?semt=ais_hybrid&w=740&q=80"
-        class="w-full h-full object-cover " />
+        class="w-full h-full object-cover" />
       <img
         src="https://img.freepik.com/free-vector/minimal-technology-twitch-background_23-2149160093.jpg?semt=ais_hybrid&w=740"
-        class="w-full h-full object-cover " />
+        class="w-full h-full object-cover" />
       <img
         src="https://img.freepik.com/free-vector/technology-future-flyer-square-template_23-2148828557.jpg?semt=ais_hybrid&w=740&q=80"
-        class="w-full h-full object-cover " />
+        class="w-full h-full object-cover" />
     </div>
-
 
     <!-- Buttons -->
     <button id="prev"
@@ -141,1054 +176,13 @@
       &#10094;
     </button>
     <button id="next"
-      class="absolute top-1/2 right-2 -translate-y-1/2 bg-[#ffffff2e]bg-opacity-50 hover:bg-opacity-80 text-gray-800 font-bold py-2 px-4 rounded-full">
+      class="absolute top-1/2 right-2 -translate-y-1/2 bg-[#ffffff2e] bg-opacity-50 hover:bg-opacity-80 text-gray-800 font-bold py-2 px-4 rounded-full">
       &#10095;
     </button>
   </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Data Cables</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Earbuds</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Neckbands</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Speakers</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Powerbanks Cables</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Batteries</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Powerbank</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Earphones</h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   <!-- Data Cables Section -->
-   <div class="px-4 py-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">Chargers </h2>
-    
-    <div class="relative group">
-      <!-- Scrollable Container -->
-      <div id="dataCablesContainer" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
-        <div class="flex space-x-4 px-2" id="dataCablesTrack">
-          <!-- Product Card 1 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png"
-                alt="Premium Data Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Premium Data Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹299</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 2 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Micro USB Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Micro USB Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹199</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Product Card 3 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png"
-                alt="Fast Charger Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Fast Charger Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹399</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 4 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="Braided Nylon Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">Braided Nylon Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹349</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Product Card 5 -->
-          <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <img src="https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg"
-                alt="USB C to C Cable" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
-              <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">USB C to C Cable</h3>
-              <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">₹449</p>
-              <div class="flex gap-2 w-full mt-auto">
-                <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="absolute left-0 top-1/2 -translate-y-1/2 -left-4">
-            <button id="scrollLeftBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 -right-4">
-            <button id="scrollRightBtn" class="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
+  <!-- Product Sections will be dynamically generated by JavaScript -->
+
   <!-- Side Menu -->
   <nav id="sideMenu"
     class="fixed top-0 left-0 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
@@ -1200,7 +194,7 @@
       <div class="container mx-auto max-w-6xl p-4 px-10 sm:p-6 lg:p-8">
 
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg font-bold tracking-wider text-gray-800 uppercase">PRODUCTS</h2></button>
+          <h2 class="text-lg font-bold tracking-wider text-gray-800 uppercase">PRODUCTS</h2>
         </div>
 
         <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-1 gap-y-8">
@@ -1245,7 +239,7 @@
             <div
               class="mb-3 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 p-4 transition-all duration-300 group-hover:shadow-lg group-hover:bg-gray-200 sm:h-28 sm:w-28">
               <img
-                src="data:image/jpeg;base64,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"
+                src="data:image/jpeg;base64,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"
                 alt="Headphones" class="max-h-full max-w-full object-contain">
             </div>
             <span class="text-sm font-medium text-gray-700">Powerbank</span>
@@ -1290,7 +284,6 @@
         </div>
 
       </div>
-    </div>
     </div>
   </nav>
 
