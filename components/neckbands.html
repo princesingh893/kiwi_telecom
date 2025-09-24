@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neckbands - KIWI Telecom</title>
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="../index.html" class="text-xl font-bold text-blue-600">KIWI Telecom</a>
+      <img src="../images/logo.png" alt="Logo" class="h-12">
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Neckbands</h1>
+    
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      <!-- Products will be dynamically inserted here -->
+    </div>
+  </main>
+  <script>
+    window.SKIP_INIT = true;
+  </script>
+  <script src="../script.js"></script>
+  <script>
+    function displayProducts(category) {
+      const productsGrid = document.getElementById('productsGrid');
+      const categoryData = productsByCategory[category];
+      if (!categoryData || !categoryData.products.length) {
+        productsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products found in this category.</p>';
+        return;
+      }
+      productsGrid.innerHTML = categoryData.products.map(product => `
+        <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <img src="${product.image}" alt="${product.name}" class="h-36 w-full object-contain mb-3">
+          <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
+          <p class="text-blue-600 font-bold text-base sm:text-lg my-2">${product.price}</p>
+          <div class="w-full mt-auto">
+            <button class="add-to-cart w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-lg text-sm font-medium transition-colors">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+
+      const buttons = productsGrid.querySelectorAll('.add-to-cart');
+      const items = categoryData.products;
+      buttons.forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+          const item = items[i];
+          cart.push({ category, name: item.name, price: item.price, image: item.image, qty: 1 });
+          localStorage.setItem('cart', JSON.stringify(cart));
+          alert('Added to cart');
+        });
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      displayProducts('neckbands');
+    });
+  </script>
+</body>
+</html>
