@@ -31,15 +31,16 @@
   <script>
     function displayProducts(category) {
       const productsGrid = document.getElementById('productsGrid');
-      const categoryData = productsByCategory[category];
-      if (!categoryData || !categoryData.products.length) {
+      const items = getProducts(category);
+      if (!items.length) {
         productsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products found in this category.</p>';
         return;
       }
-      productsGrid.innerHTML = categoryData.products.map(product => `
+      productsGrid.innerHTML = items.map(product => `
         <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
           <img src="${product.image}" alt="${product.name}" class="h-36 w-full object-contain mb-3">
           <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
+          ${product.description ? `<p class=\"text-gray-600 text-sm text-center mt-1\">${product.description}</p>` : ''}
           <p class="text-blue-600 font-bold text-base sm:text-lg my-2">${product.price}</p>
           <div class="w-full mt-auto">
             <button class="add-to-cart w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-lg text-sm font-medium transition-colors">Add to Cart</button>
@@ -48,7 +49,6 @@
       `).join('');
 
       const buttons = productsGrid.querySelectorAll('.add-to-cart');
-      const items = categoryData.products;
       buttons.forEach((btn, i) => {
         btn.addEventListener('click', () => {
           const cart = JSON.parse(localStorage.getItem('cart') || '[]');

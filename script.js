@@ -252,13 +252,55 @@ const productsByCategory = {
     }
 };
 
+// ---------------- User Products (localStorage) ----------------
+const USER_PRODUCTS_KEY = 'userProducts';
+
+function loadUserProducts() {
+    try {
+        return JSON.parse(localStorage.getItem(USER_PRODUCTS_KEY) || '{}');
+    } catch {
+        return {};
+    }
+}
+
+function saveUserProducts(data) {
+    localStorage.setItem(USER_PRODUCTS_KEY, JSON.stringify(data));
+}
+
+function addProduct(categoryId, product) {
+    const data = loadUserProducts();
+    if (!data[categoryId]) data[categoryId] = [];
+    // Normalize price to keep the rupee symbol if user missed it
+    if (product.price && !/^₹/.test(product.price.trim())) {
+        product.price = `₹${product.price.trim()}`;
+    }
+    data[categoryId].push({
+        name: product.name?.trim() || 'Untitled',
+        price: product.price?.trim() || '₹0',
+        image: product.image || '',
+        description: product.description?.trim() || ''
+    });
+    saveUserProducts(data);
+}
+
+function getProducts(categoryId) {
+    const defaults = productsByCategory[categoryId]?.products || [];
+    const user = loadUserProducts()[categoryId] || [];
+    return [...defaults, ...user];
+}
+
+function getCategoryTitle(categoryId) {
+    return productsByCategory[categoryId]?.title || categoryId;
+}
+
 // Function to create a product card
-function createProductCard(product) {
+function createProductCard(product, categoryId) {
     return `
-        <div class="flex-shrink-0 w-56 sm:w-64 snap-start">
+        <div class="flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                 <img src="${product.image}" alt="${product.name}" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
+                ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
                 <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">${product.price}</p>
                 <div class="flex gap-2 w-full mt-auto">
                     <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
@@ -293,7 +335,7 @@ function createCategorySection(categoryId, categoryData) {
                 <!-- Scrollable Container -->
                 <div id="${categoryId}Container" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
                     <div class="flex space-x-4 px-2" id="${categoryId}Track">
-                        ${categoryData.products.map(createProductCard).join('')}
+                        ${categoryData.products.map(p => createProductCard(p, categoryId)).join('')}
                     </div>
                 </div>
             </div>
@@ -426,15 +468,63 @@ function setupCategoryScroll(categoryId) {
 // Initialize all category sections
 function initializeProductSections() {
     const mainContainer = document.body;
-    
-    // Create and append each category section
-    Object.entries(productsByCategory).forEach(([categoryId, categoryData]) => {
+    const order = [
+        'dataCables', 'chargers', 'earphones', 'earbuds', 'neckbands', 'speakers', 'powerbankCables', 'batteries', 'powerbanks'
+    ];
+    order.forEach((categoryId) => {
+        if (!productsByCategory[categoryId]) return;
+        const merged = {
+            title: getCategoryTitle(categoryId),
+            products: getProducts(categoryId)
+        };
         const section = document.createElement('div');
-        section.innerHTML = createCategorySection(categoryId, categoryData);
+        section.innerHTML = createCategorySection(categoryId, merged);
         mainContainer.appendChild(section);
-        
-        // Initialize scroll for this category
         setupCategoryScroll(categoryId);
+    });
+}
+
+// ---------------- Search & Filter ----------------
+function applySearchFilter() {
+    const input = document.getElementById('searchInput');
+    const select = document.getElementById('searchCategory');
+    const term = (input?.value || '').trim().toLowerCase();
+    const selected = select?.value || 'all';
+
+    const tracks = document.querySelectorAll('[id$="Track"]');
+    tracks.forEach(track => {
+        const cards = track.children;
+        let anyVisible = false;
+        Array.from(cards).forEach(card => {
+            const name = card.getAttribute('data-name') || '';
+            const cat = card.getAttribute('data-category') || '';
+            const matchesText = term === '' || name.includes(term);
+            const matchesCat = selected === 'all' || cat === selected;
+            const show = matchesText && matchesCat;
+            if (show) {
+                card.classList.remove('hidden');
+                anyVisible = true;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+        // Optionally hide empty sections (keep visible to maintain layout)
+    });
+}
+
+function setupSearch() {
+    const input = document.getElementById('searchInput');
+    const select = document.getElementById('searchCategory');
+    const clearBtn = document.getElementById('clearSearch');
+    if (!input || !select) return;
+
+    input.addEventListener('input', applySearchFilter);
+    select.addEventListener('change', applySearchFilter);
+    clearBtn?.addEventListener('click', () => {
+        input.value = '';
+        select.value = 'all';
+        applySearchFilter();
+        input.focus();
     });
 }
 
@@ -511,5 +601,9 @@ if (slides) {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    initializeProductSections();
+    if (!window.SKIP_INIT) {
+        initializeProductSections();
+        // Initialize search after sections are mounted
+        setupSearch();
+    }
 });
