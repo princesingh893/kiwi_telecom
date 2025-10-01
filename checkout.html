@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - KIWI Telecom</title>
+  <link rel="stylesheet" href="src/output.css" />
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="index.html" class="text-xl font-bold text-blue-600">KIWI Telecom</a>
+      <img src="images/logo.png" alt="Logo" class="h-12" />
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-6">Checkout</h1>
+
+    <div id="emptyState" class="hidden text-center py-16 bg-white rounded-xl shadow">
+      <p class="text-gray-600 mb-4">Your cart is empty.</p>
+      <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Continue Shopping</a>
+    </div>
+
+    <div id="cartWrapper" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Items -->
+      <div class="lg:col-span-2 bg-white rounded-xl shadow p-4" id="itemsContainer"></div>
+
+      <!-- Summary -->
+      <aside class="bg-white rounded-xl shadow p-4 h-fit" id="summary">
+        <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+        <div class="flex justify-between text-gray-700 mb-2">
+          <span>Subtotal</span>
+          <span id="subtotal">₹0</span>
+        </div>
+        <div class="flex justify-between text-gray-700 mb-2">
+          <span>Shipping</span>
+          <span id="shipping">₹0</span>
+        </div>
+        <div class="border-t my-3"></div>
+        <div class="flex justify-between font-semibold text-lg">
+          <span>Total</span>
+          <span id="total">₹0</span>
+        </div>
+        <button id="placeOrder" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium">Place Order</button>
+        <button id="clearCart" class="w-full mt-2 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 rounded-lg font-medium">Clear Cart</button>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    function parsePrice(p) {
+      // prices come like "₹1299"; strip non-digits
+      const n = String(p || '').replace(/[^0-9.]/g, '');
+      return Number(n || 0);
+    }
+
+    function formatINR(n) {
+      return '₹' + new Intl.NumberFormat('en-IN').format(Math.round(n));
+    }
+
+    function loadCart() {
+      try {
+        return JSON.parse(localStorage.getItem('cart') || '[]');
+      } catch { return []; }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function render() {
+      const cart = loadCart();
+      const empty = document.getElementById('emptyState');
+      const wrapper = document.getElementById('cartWrapper');
+      const itemsContainer = document.getElementById('itemsContainer');
+      const subtotalEl = document.getElementById('subtotal');
+      const totalEl = document.getElementById('total');
+      const shippingEl = document.getElementById('shipping');
+
+      if (!cart.length) {
+        empty.classList.remove('hidden');
+        wrapper.classList.add('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      wrapper.classList.remove('hidden');
+
+      let subtotal = 0;
+      itemsContainer.innerHTML = cart.map((item, idx) => {
+        const price = parsePrice(item.price);
+        subtotal += price * (item.qty || 1);
+        return `
+          <div class="flex gap-4 border-b py-4 last:border-b-0">
+            <img src="${item.image}" alt="${item.name}" class="w-24 h-24 object-contain bg-white rounded" />
+            <div class="flex-1">
+              <div class="flex justify-between">
+                <h3 class="font-semibold">${item.name}</h3>
+                <button data-remove="${idx}" class="text-red-600 hover:underline">Remove</button>
+              </div>
+              <p class="text-sm text-gray-600">Category: ${item.category}</p>
+              <div class="mt-2 flex items-center gap-3">
+                <span class="font-semibold">${item.price}</span>
+                <div class="ml-auto flex items-center gap-2">
+                  <button data-dec="${idx}" class="px-2 py-1 border rounded">-</button>
+                  <span>${item.qty || 1}</span>
+                  <button data-inc="${idx}" class="px-2 py-1 border rounded">+</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      const shipping = 0; // free shipping
+      const total = subtotal + shipping;
+      subtotalEl.textContent = formatINR(subtotal);
+      shippingEl.textContent = formatINR(shipping);
+      totalEl.textContent = formatINR(total);
+
+      // Wire buttons
+      itemsContainer.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-remove'));
+          const c = loadCart(); c.splice(i, 1); saveCart(c); render();
+        });
+      });
+      itemsContainer.querySelectorAll('[data-inc]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-inc'));
+          const c = loadCart(); c[i].qty = (c[i].qty || 1) + 1; saveCart(c); render();
+        });
+      });
+      itemsContainer.querySelectorAll('[data-dec]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-dec'));
+          const c = loadCart(); c[i].qty = Math.max(1, (c[i].qty || 1) - 1); saveCart(c); render();
+        });
+      });
+    }
+
+    document.getElementById('placeOrder').addEventListener('click', () => {
+      const cart = loadCart();
+      if (!cart.length) return;
+      alert('Order placed successfully!');
+      saveCart([]);
+      window.location.href = 'index.html';
+    });
+
+    document.getElementById('clearCart').addEventListener('click', () => {
+      saveCart([]);
+      render();
+    });
+
+    // init
+    render();
+  </script>
+</body>
+</html>

@@ -5,9 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>KIWI Telecom</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     /* Custom scrollbar for horizontal scroll */
     .hide-scrollbar {
@@ -43,38 +40,6 @@
       background: #f1f1f1;
       border-radius: 4px;
       margin: 0 2rem;
-    }
-    
-    .hide-scrollbar::-webkit-scrollbar-thumb {
-      background: #9ca3af;
-      border-radius: 4px;
-    }
-    
-    .hide-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #6b7280;
-    }
-    
-    /* Snap scrolling for product cards */
-    .snap-x {
-      scroll-snap-type: x mandatory;
-    }
-    
-    .snap-start {
-      scroll-snap-align: start;
-    }
-    
-    /* Smooth transitions for hover effects */
-    .transition-all {
-      transition: all 0.3s ease;
-    }
-    
-    /* Navigation buttons */
-    .scroll-button {
-      transition: opacity 0.3s ease, transform 0.2s ease;
-    }
-    
-    .scroll-button:active {
-      transform: scale(0.95);
     }
     
     .hide-scrollbar::-webkit-scrollbar-thumb {
@@ -138,6 +103,125 @@
     .scroll-btn:active {
       transform: translateY(-50%) scale(0.95);
     }
+
+    /* Search Bar Styles */
+    #searchInput {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    #searchInput:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #searchCategory {
+      padding: 12px 40px 12px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      background-color: white;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    #searchCategory:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #clearSearch {
+      padding: 10px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background-color: white;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    #clearSearch:hover {
+      background-color: #f9fafb;
+    }
+
+    #clearSearch:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-section {
+      position: sticky;
+      top: 64px;
+      z-index: 30;
+      background-color: white;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .search-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 16px;
+    }
+
+    .search-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .search-wrapper {
+        flex-direction: row;
+        align-items: center;
+      }
+      
+      #searchInput {
+        font-size: 14px;
+      }
+      
+      #searchCategory {
+        font-size: 14px;
+        min-width: 180px;
+      }
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .dropdown-icon {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
   </style>
   <link rel="stylesheet" href="src/output.css">
 </head>
@@ -147,40 +231,53 @@
   <header class="flex items-center justify-between px-8 py-4 bg-white shadow-md sticky top-0 z-40">
     <button id="menuBtn" class="text-3xl hover:text-blue-600 transition">☰</button>
     <div class="flex items-center gap-4">
-      <a href="admin.html" class="text-sm text-gray-600 hover:text-blue-600">Admin Panel</a>
       <img src="images/logo.png" alt="Logo" class="h-12">
     </div>
   </header>
 
-  <!-- Advanced Search -->
-  <section class="px-4 sm:px-6 lg:px-8 py-4 bg-white/70 backdrop-blur sticky top-[64px] z-30">
-    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-      <div class="flex-1 flex items-center gap-2">
-        <div class="relative flex-1">
-          <input id="searchInput" type="text" placeholder="Search products by name..."
-            class="w-full border rounded-lg pl-10 pr-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-            autocomplete="off" />
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
+  <!-- Enhanced Search Bar -->
+  <section class="search-section">
+    <div class="search-container">
+      <div class="search-wrapper">
+        <!-- Search Input with Icon -->
+        <div class="search-input-wrapper">
+          <div class="search-icon">
+            <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
             </svg>
-          </span>
+          </div>
+          <input 
+            id="searchInput" 
+            type="text" 
+            placeholder="Search products by name..."
+            autocomplete="off"
+            aria-label="Search products"
+          />
         </div>
-        <select id="searchCategory" class="border rounded-lg px-3 py-2">
-          <option value="all">All Categories</option>
-          <option value="dataCables">Data Cables</option>
-          <option value="chargers">Chargers</option>
-          <option value="earphones">Earphones</option>
-          <option value="earbuds">Earbuds</option>
-          <option value="neckbands">Neckbands</option>
-          <option value="speakers">Speakers</option>
-          <option value="powerbankCables">Powerbank Cables</option>
-          <option value="batteries">Batteries</option>
-          <option value="powerbanks">Powerbanks</option>
-        </select>
-      </div>
-      <div class="flex gap-2">
-        <button id="clearSearch" class="px-3 py-2 border rounded-lg text-sm hover:bg-gray-50">Clear</button>
+        
+        <!-- Category Dropdown -->
+        <div style="position: relative;">
+          <select id="searchCategory">
+            <option value="">All Categories</option>
+            <option value="dataCables">Data Cables</option>
+            <option value="chargers">Chargers</option>
+            <option value="earphones">Earphones</option>
+            <option value="earbuds">Earbuds</option>
+            <option value="neckbands">Neckbands</option>
+            <option value="speakers">Speakers</option>
+            <option value="powerbankCables">Powerbank Cables</option>
+            <option value="batteries">Batteries</option>
+            <option value="powerbanks">Powerbanks</option>
+          </select>
+          <div class="dropdown-icon">
+            <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Clear Button -->
+        <button id="clearSearch">Clear</button>
       </div>
     </div>
   </section>
@@ -233,7 +330,7 @@
           <h2 class="text-lg font-bold tracking-wider text-gray-800 uppercase">PRODUCTS</h2>
         </div>
 
-        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-1 gap-y-8">
+        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
 
           <a href="components/earbuds.html" class="flex flex-col items-center text-center group">
             <div
@@ -276,7 +373,7 @@
               class="mb-3 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 p-4 transition-all duration-300 group-hover:shadow-lg group-hover:bg-gray-200 sm:h-28 sm:w-28">
               <img
                 src="https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
-                alt="Headphones" class="max-h-full max-w-full object-contain">
+                alt="Powerbank" class="max-h-full max-w-full object-contain">
             </div>
             <span class="text-sm font-medium text-gray-700">Powerbank</span>
           </a>
@@ -285,7 +382,7 @@
             <div
               class="mb-3 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 p-4 transition-all duration-300 group-hover:shadow-lg group-hover:bg-gray-200 sm:h-28 sm:w-28">
               <img src="https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg"
-                alt="Microphones" class="max-h-full max-w-full object-contain">
+{{ ... }}
             </div>
             <span class="text-sm font-medium text-gray-700">Powerbank Cables</span>
           </a>

@@ -42,9 +42,7 @@
           <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
           ${product.description ? `<p class=\"text-gray-600 text-sm text-center mt-1\">${product.description}</p>` : ''}
           <p class="text-blue-600 font-bold text-base sm:text-lg my-2">${product.price}</p>
-          <div class="w-full mt-auto">
-            <button class="add-to-cart w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-lg text-sm font-medium transition-colors">Add to Cart</button>
-          </div>
+          <div class="flex gap-2 w-full mt-auto"><button class="add-to-cart flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-lg text-sm font-medium transition-colors">Add to Cart</button><button class="buy-now flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors">Buy Now</button></div>
         </div>
       `).join('');
 
@@ -56,6 +54,16 @@
           cart.push({ category, name: item.name, price: item.price, image: item.image, qty: 1 });
           localStorage.setItem('cart', JSON.stringify(cart));
           alert('Added to cart');
+        });
+      });
+
+      // Buy Now handlers
+      const buyNowButtons = productsGrid.querySelectorAll('.buy-now');
+      buyNowButtons.forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          const newCart = [{ category, name: items[i].name, price: items[i].price, image: items[i].image, qty: 1 }];
+          localStorage.setItem('cart', JSON.stringify(newCart));
+          window.location.href = '../checkout.html';
         });
       });
     }

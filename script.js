@@ -176,17 +176,17 @@ const productsByCategory = {
             {
                 name: '10000mAh Powerbank',
                 price: '₹1299',
-                image: ""
+                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
             },
             {
                 name: '20000mAh Powerbank',
                 price: '₹1999',
-                image: ""
+                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
             },
             {
                 name: '5000mAh Mini Powerbank',
                 price: '₹899',
-                image: ""
+                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
             }
         ]
     },
@@ -252,51 +252,18 @@ const productsByCategory = {
     }
 };
 
-// ---------------- User Products (localStorage) ----------------
-const USER_PRODUCTS_KEY = 'userProducts';
-
-function loadUserProducts() {
-    try {
-        return JSON.parse(localStorage.getItem(USER_PRODUCTS_KEY) || '{}');
-    } catch {
-        return {};
-    }
-}
-
-function saveUserProducts(data) {
-    localStorage.setItem(USER_PRODUCTS_KEY, JSON.stringify(data));
-}
-
-function addProduct(categoryId, product) {
-    const data = loadUserProducts();
-    if (!data[categoryId]) data[categoryId] = [];
-    // Normalize price to keep the rupee symbol if user missed it
-    if (product.price && !/^₹/.test(product.price.trim())) {
-        product.price = `₹${product.price.trim()}`;
-    }
-    data[categoryId].push({
-        name: product.name?.trim() || 'Untitled',
-        price: product.price?.trim() || '₹0',
-        image: product.image || '',
-        description: product.description?.trim() || ''
-    });
-    saveUserProducts(data);
+function getCategoryTitle(categoryId) {
+    return productsByCategory[categoryId]?.title || categoryId;
 }
 
 function getProducts(categoryId) {
-    const defaults = productsByCategory[categoryId]?.products || [];
-    const user = loadUserProducts()[categoryId] || [];
-    return [...defaults, ...user];
-}
-
-function getCategoryTitle(categoryId) {
-    return productsByCategory[categoryId]?.title || categoryId;
+    return productsByCategory[categoryId]?.products || [];
 }
 
 // Function to create a product card
 function createProductCard(product, categoryId) {
     return `
-        <div class="flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
+        <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                 <img src="${product.image}" alt="${product.name}" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
@@ -318,7 +285,7 @@ function createProductCard(product, categoryId) {
 function createCategorySection(categoryId, categoryData) {
     return `
         <div class="px-4 py-6 product-section">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
+            <h2 class="section-header text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
             <div class="relative group">
                 <!-- Scroll buttons -->
                 <button class="scroll-btn scroll-btn-left" data-category="${categoryId}">
@@ -485,55 +452,65 @@ function initializeProductSections() {
 }
 
 // ---------------- Search & Filter ----------------
-function applySearchFilter() {
-    const input = document.getElementById('searchInput');
-    const select = document.getElementById('searchCategory');
-    const term = (input?.value || '').trim().toLowerCase();
-    const selected = select?.value || 'all';
-
-    const tracks = document.querySelectorAll('[id$="Track"]');
-    tracks.forEach(track => {
-        const cards = track.children;
-        let anyVisible = false;
-        Array.from(cards).forEach(card => {
-            const name = card.getAttribute('data-name') || '';
-            const cat = card.getAttribute('data-category') || '';
-            const matchesText = term === '' || name.includes(term);
-            const matchesCat = selected === 'all' || cat === selected;
-            const show = matchesText && matchesCat;
-            if (show) {
-                card.classList.remove('hidden');
-                anyVisible = true;
-            } else {
-                card.classList.add('hidden');
-            }
-        });
-        // Optionally hide empty sections (keep visible to maintain layout)
-    });
-}
-
 function setupSearch() {
     const input = document.getElementById('searchInput');
     const select = document.getElementById('searchCategory');
     const clearBtn = document.getElementById('clearSearch');
-    if (!input || !select) return;
+    const productSections = document.querySelectorAll('.product-section');
 
-    input.addEventListener('input', applySearchFilter);
-    select.addEventListener('change', applySearchFilter);
-    clearBtn?.addEventListener('click', () => {
-        input.value = '';
-        select.value = 'all';
-        applySearchFilter();
-        input.focus();
-    });
+    function filterProducts() {
+        const searchTerm = input.value.trim().toLowerCase();
+        const category = select.value;
+        let anyVisible = false;
+
+        productSections.forEach(section => {
+            const products = section.querySelectorAll('.product-card');
+            let sectionHasVisibleProducts = false;
+
+            products.forEach(product => {
+                const productName = (product.getAttribute('data-name') || '').toLowerCase();
+                const productCategory = product.getAttribute('data-category') || '';
+                const matchesSearch = searchTerm === '' || productName.includes(searchTerm);
+                const matchesCategory = !category || productCategory === category;
+                const isVisible = matchesSearch && matchesCategory;
+                
+                product.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) sectionHasVisibleProducts = true;
+                anyVisible = anyVisible || isVisible;
+            });
+
+            // Show/hide section header based on visible products
+            const sectionHeader = section.previousElementSibling;
+            if (sectionHeader && sectionHeader.classList.contains('section-header')) {
+                sectionHeader.style.display = sectionHasVisibleProducts ? 'flex' : 'none';
+            }
+            section.style.display = sectionHasVisibleProducts ? 'block' : 'none';
+        });
+
+        // Show/hide no results message
+        const noResults = document.getElementById('noResults');
+        if (noResults) {
+            noResults.style.display = anyVisible ? 'none' : 'block';
+        }
+    }
+
+    input.addEventListener('input', filterProducts);
+    select.addEventListener('change', filterProducts);
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            select.value = '';
+            filterProducts();
+            input.focus();
+        });
+    }
 }
-
 // ---------------- Side Menu ----------------
 const menuBtn = document.getElementById("menuBtn");
 const closeMenu = document.getElementById("closeMenu");
 const sideMenu = document.getElementById("sideMenu");
 const overlay = document.getElementById("overlay");
-
 // Function to set menu width based on screen size
 function setMenuWidth() {
     if (window.innerWidth <= 500) {
@@ -603,6 +580,23 @@ if (slides) {
 document.addEventListener('DOMContentLoaded', () => {
     if (!window.SKIP_INIT) {
         initializeProductSections();
+        // Add no results message if it doesn't exist
+        const host = document.querySelector('main') || document.body;
+        if (host && !document.getElementById('noResults')) {
+            const noResults = document.createElement('div');
+            noResults.id = 'noResults';
+            noResults.className = 'hidden text-center py-10';
+            noResults.innerHTML = `
+                <div class="text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-gray-900">No products found</h3>
+                    <p class="mt-1 text-gray-500">We couldn't find any products matching your search.</p>
+                </div>
+            `;
+            host.appendChild(noResults);
+        }
         // Initialize search after sections are mounted
         setupSearch();
     }
