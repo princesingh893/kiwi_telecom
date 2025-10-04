@@ -458,6 +458,8 @@ function setupSearch() {
     const clearBtn = document.getElementById('clearSearch');
     const productSections = document.querySelectorAll('.product-section');
 
+    if (!input || !select || !clearBtn) return; // Exit if elements not found
+
     function filterProducts() {
         const searchTerm = input.value.trim().toLowerCase();
         const category = select.value;
@@ -471,7 +473,7 @@ function setupSearch() {
                 const productName = (product.getAttribute('data-name') || '').toLowerCase();
                 const productCategory = product.getAttribute('data-category') || '';
                 const matchesSearch = searchTerm === '' || productName.includes(searchTerm);
-                const matchesCategory = !category || productCategory === category;
+                const matchesCategory = !category || productCategory === category || category === 'all';
                 const isVisible = matchesSearch && matchesCategory;
                 
                 product.style.display = isVisible ? 'block' : 'none';
@@ -494,19 +496,25 @@ function setupSearch() {
         }
     }
 
+    // Initial filter on page load
+    filterProducts();
+
+    // Event listeners
     input.addEventListener('input', filterProducts);
     select.addEventListener('change', filterProducts);
 
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
             input.value = '';
-            select.value = '';
+            select.value = 'all';
             filterProducts();
             input.focus();
         });
     }
 }
-// ---------------- Side Menu ----------------
+
+// (Search is initialized after sections are created later)
+
 const menuBtn = document.getElementById("menuBtn");
 const closeMenu = document.getElementById("closeMenu");
 const sideMenu = document.getElementById("sideMenu");
