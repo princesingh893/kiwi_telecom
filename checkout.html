@@ -50,6 +50,44 @@
     </div>
   </main>
 
+  <!-- Order Modal -->
+  <div id="orderModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold">Enter your details</h3>
+        <button id="closeOrderModal" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">×</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Name</label>
+          <input id="custName" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Your full name" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Address</label>
+          <textarea id="custAddress" rows="3" class="w-full border rounded-lg px-3 py-2" placeholder="House, Street, City, Pincode"></textarea>
+        </div>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <button id="submitOrder" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium">Confirm Order</button>
+        <button id="cancelOrder" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 rounded-lg font-medium">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="successPopup" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center">
+      <div class="mx-auto mb-4 h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+        <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold">Order Placed!</h3>
+      <p class="mt-1 text-gray-600">Thank you for shopping with us.</p>
+      <button id="successOk" class="mt-6 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">OK</button>
+    </div>
+  </div>
+
   <script>
     function parsePrice(p) {
       // prices come like "₹1299"; strip non-digits
@@ -101,12 +139,19 @@
                 <button data-remove="${idx}" class="text-red-600 hover:underline">Remove</button>
               </div>
               <p class="text-sm text-gray-600">Category: ${item.category}</p>
-              <div class="mt-2 flex items-center gap-3">
-                <span class="font-semibold">${item.price}</span>
-                <div class="ml-auto flex items-center gap-2">
-                  <button data-dec="${idx}" class="px-2 py-1 border rounded">-</button>
-                  <span>${item.qty || 1}</span>
-                  <button data-inc="${idx}" class="px-2 py-1 border rounded">+</button>
+              <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1">Price</label>
+                  <span class="font-semibold">${item.price}</span>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1">Quantity</label>
+                  <div class="flex items-center gap-2">
+                    <button data-dec="${idx}" class="px-2 py-1 border rounded">-</button>
+                    <input data-qty="${idx}" type="number" min="1" value="${item.qty || 1}"
+                           class="w-16 border rounded px-2 py-1 text-sm text-center" />
+                    <button data-inc="${idx}" class="px-2 py-1 border rounded">+</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -138,13 +183,148 @@
           const c = loadCart(); c[i].qty = Math.max(1, (c[i].qty || 1) - 1); saveCart(c); render();
         });
       });
+      // Wire quantity input
+      itemsContainer.querySelectorAll('[data-qty]').forEach(input => {
+        input.addEventListener('change', () => {
+          const i = Number(input.getAttribute('data-qty'));
+          let v = parseInt(input.value || '1', 10);
+          if (!Number.isFinite(v) || v < 1) v = 1;
+          const c = loadCart(); c[i].qty = v; saveCart(c); render();
+        });
+      });
+      // No CPP inputs on checkout; only qty is editable
     }
 
-    document.getElementById('placeOrder').addEventListener('click', () => {
+    const orderModal = document.getElementById('orderModal');
+    const successPopup = document.getElementById('successPopup');
+    const placeOrderBtn = document.getElementById('placeOrder');
+    const closeOrderModal = document.getElementById('closeOrderModal');
+    const cancelOrder = document.getElementById('cancelOrder');
+    const submitOrder = document.getElementById('submitOrder');
+    const successOk = document.getElementById('successOk');
+
+    // Configure your Google Apps Script Web App URL here
+    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyCt3X19U97mIpkANniz5uJhJ-BTRph_XrQ87-aWYO0DoKwLqFJIyeohtCaHPe36CIz/exec';
+
+    function openOrderModal() {
+      orderModal.classList.remove('hidden');
+      orderModal.classList.add('flex');
+      document.getElementById('custName').focus();
+    }
+    function closeModal() {
+      orderModal.classList.add('hidden');
+      orderModal.classList.remove('flex');
+    }
+    function openSuccess() {
+      successPopup.classList.remove('hidden');
+      successPopup.classList.add('flex');
+    }
+    function closeSuccess() {
+      successPopup.classList.add('hidden');
+      successPopup.classList.remove('flex');
+    }
+
+    placeOrderBtn.addEventListener('click', () => {
       const cart = loadCart();
       if (!cart.length) return;
-      alert('Order placed successfully!');
+      openOrderModal();
+    });
+    closeOrderModal.addEventListener('click', closeModal);
+    cancelOrder.addEventListener('click', closeModal);
+
+    async function postToAppsScript(payload) {
+      // Attempt normal JSON POST first
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+          credentials: 'omit'
+        });
+        clearTimeout(timeout);
+        let bodyText = '';
+        try { bodyText = await res.text(); } catch {}
+        let parsed = null;
+        try { parsed = JSON.parse(bodyText); } catch {}
+        const ok = res.ok && (parsed?.ok !== false);
+        return { ok, status: res.status, bodyText, parsed };
+      } catch (e) {
+        console.warn('Normal POST failed (likely CORS). Retrying with no-cors...', e);
+      }
+
+      // Fallback for CORS: no-cors + text/plain (cannot read response, assume success)
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+          credentials: 'omit'
+        });
+        return { ok: true, status: 0, bodyText: '', parsed: null };
+      } catch (e2) {
+        console.error('Apps Script POST failed (no-cors fallback):', e2);
+        return { ok: false, status: 0, bodyText: String(e2), parsed: null };
+      }
+    }
+
+    submitOrder.addEventListener('click', async () => {
+      const name = (document.getElementById('custName').value || '').trim();
+      const address = (document.getElementById('custAddress').value || '').trim();
+      if (!name || !address) {
+        alert('Please enter your name and address.');
+        return;
+      }
+
+      const cart = loadCart();
+      if (!cart.length) { closeModal(); return; }
+
+      // Build payload
+      const dateIso = new Date().toISOString();
+      const shipping = 0;
+      const subtotal = cart.reduce((s, it) => s + parsePrice(it.price) * (it.qty || 1), 0);
+      const total = subtotal + shipping;
+      const items = cart.map(it => ({
+        name: it.name,
+        category: it.category,
+        price: parsePrice(it.price),
+        qty: it.qty || 1,
+        lineTotal: parsePrice(it.price) * (it.qty || 1)
+      }));
+
+      const payload = { date: dateIso, name, address, subtotal, shipping, total, items };
+
+      // Disable actions while sending
+      submitOrder.disabled = true; submitOrder.textContent = 'Placing...';
+      cancelOrder.disabled = true; closeOrderModal.disabled = true;
+
+      let result = { ok: true, status: 0, bodyText: '', parsed: null };
+      if (APPS_SCRIPT_URL) {
+        result = await postToAppsScript(payload);
+      }
+
+      // Re-enable buttons
+      submitOrder.disabled = false; submitOrder.textContent = 'Confirm Order';
+      cancelOrder.disabled = false; closeOrderModal.disabled = false;
+
+      if (!result.ok) {
+        console.error('Order POST error:', result);
+        alert(`Failed to send order to Google Sheets.\nStatus: ${result.status}\nResponse: ${result.bodyText || 'No body'}\nYour order is NOT lost. Please try again.`);
+        return; // keep modal open and cart intact
+      }
+
+      // Success UX
+      closeModal();
+      openSuccess();
+      // Clear cart
       saveCart([]);
+    });
+
+    successOk.addEventListener('click', () => {
+      closeSuccess();
       window.location.href = 'index.html';
     });
 

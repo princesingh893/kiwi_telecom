@@ -30,40 +30,15 @@
   </script>
   <script src="../script.js"></script>
   <script>
-    function displayProducts(category) {
-      const productsGrid = document.getElementById('productsGrid');
+    document.addEventListener('DOMContentLoaded', () => {
+      const category = 'powerbankCables';
       const items = getProducts(category);
+      const grid = document.getElementById('productsGrid');
       if (!items.length) {
-        productsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products found in this category.</p>';
+        grid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products found in this category.</p>';
         return;
       }
-      productsGrid.innerHTML = items.map(product => `
-        <div class=\"bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1\">\n          <img src=\"${product.image}\" alt=\"${product.name}\" class=\"h-36 w-full object-contain mb-3\">\n          <h3 class=\"font-semibold text-gray-800 text-center text-sm sm:text-base\">${product.name}</h3>\n          ${product.description ? `<p class=\"text-gray-600 text-sm text-center mt-1\">${product.description}</p>` : ''}\n          <p class=\"text-blue-600 font-bold text-base sm:text-lg my-2\">${product.price}</p>\n          <div class=\"flex gap-2 w-full mt-auto\">\n            <button class=\"add-to-cart flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-3 rounded-lg text-sm font-medium transition-colors\">Add to Cart</button>\n            <button class=\"buy-now flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors\">Buy Now</button>\n          </div>\n        </div>
-      `).join('');
-
-      const buttons = productsGrid.querySelectorAll('.add-to-cart');
-      buttons.forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-          const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          const item = items[i];
-          cart.push({ category, name: item.name, price: item.price, image: item.image, qty: 1 });
-
-          alert('Added to cart');
-        });
-      });
-
-      // Buy Now handlers
-      const buyNowButtons = productsGrid.querySelectorAll('.buy-now');
-      buyNowButtons.forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-          const newCart = [{ category, name: items[i].name, price: items[i].price, image: items[i].image, qty: 1 }];
-          localStorage.setItem('cart', JSON.stringify(newCart));
-          window.location.href = '../checkout.html';
-        });
-      });
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      displayProducts('powerbankCables');
+      grid.innerHTML = items.map(p => createProductCard(p, category)).join('');
     });
   </script>
 </body>

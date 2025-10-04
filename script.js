@@ -269,11 +269,21 @@ function createProductCard(product, categoryId) {
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
                 ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
                 <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">${product.price}</p>
+                <div class="flex items-center justify-between w-full mb-2 gap-3">
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" data-select />
+                        <span>Select</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                        <span>Qty</span>
+                        <input type="number" data-qty min="1" value="1" class="w-16 border rounded px-2 py-1 text-sm text-center" />
+                    </label>
+                </div>
                 <div class="flex gap-2 w-full mt-auto">
-                    <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                    <button data-action="add" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
                         Add to Cart
                     </button>
-                    <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
+                    <button data-action="buy" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors">
                         Buy Now
                     </button>
                 </div>
@@ -480,12 +490,6 @@ function setupSearch() {
                 if (isVisible) sectionHasVisibleProducts = true;
                 anyVisible = anyVisible || isVisible;
             });
-
-            // Show/hide section header based on visible products
-            const sectionHeader = section.previousElementSibling;
-            if (sectionHeader && sectionHeader.classList.contains('section-header')) {
-                sectionHeader.style.display = sectionHasVisibleProducts ? 'flex' : 'none';
-            }
             section.style.display = sectionHasVisibleProducts ? 'block' : 'none';
         });
 
@@ -607,5 +611,101 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Initialize search after sections are mounted
         setupSearch();
+
+    }
+    // Create floating Add Selected button (also for component pages)
+    if (!document.getElementById('addSelectedBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'addSelectedBtn';
+        btn.textContent = 'Add Selected';
+        btn.className = 'fixed bottom-6 right-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg z-40';
+        btn.addEventListener('click', () => {
+            const cards = Array.from(document.querySelectorAll('.product-card'));
+            const selected = cards.filter(c => c.querySelector('[data-select]')?.checked);
+            if (!selected.length) {
+                alert('Select at least one product.');
+                return;
+            }
+            let addedCount = 0;
+            selected.forEach(card => {
+                const qtyInput = card.querySelector('[data-qty]');
+                let qty = parseInt(qtyInput?.value || '1', 10);
+                if (!Number.isFinite(qty) || qty < 1) qty = 1;
+                addCardToCart(card, qty);
+                addedCount += 1;
+            });
+            alert(`Added ${addedCount} product(s) to cart.`);
+        });
+        document.body.appendChild(btn);
     }
 });
+
+// ---------------- Cart Management (Index Page) ----------------
+// These helpers are used on index.html only; checkout.html defines its own helpers.
+function loadCartIndex() {
+    try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
+}
+function saveCartIndex(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function addCardToCart(cardEl, forcedQty) {
+    if (!cardEl) return null;
+    const name = cardEl.querySelector('h3')?.textContent?.trim() || '';
+    const price = cardEl.querySelector('.text-blue-600')?.textContent?.trim() || '';
+    const img = cardEl.querySelector('img')?.getAttribute('src') || '';
+    const category = cardEl.getAttribute('data-category') || '';
+
+    let qty = forcedQty;
+    if (!Number.isFinite(qty)) {
+        const qtyInput = cardEl.querySelector('[data-qty]');
+        qty = parseInt(qtyInput?.value || '1', 10);
+    }
+    if (!Number.isFinite(qty) || qty < 1) qty = 1;
+
+    const item = { name, price, image: img, category, qty };
+    const cart = loadCartIndex();
+    cart.push(item); // Always add as a new line item
+    saveCartIndex(cart);
+    return item;
+}
+
+// Event delegation for Add to Cart / Buy Now
+document.addEventListener('click', (e) => {
+    const addBtn = e.target.closest('[data-action="add"]');
+    const buyBtn = e.target.closest('[data-action="buy"]');
+    if (!addBtn && !buyBtn) return;
+    const card = (addBtn || buyBtn)?.closest('.product-card');
+    if (!card) return;
+
+    const qtyInput = card.querySelector('[data-qty]');
+    let qty = parseInt(qtyInput?.value || '1', 10);
+    if (!Number.isFinite(qty) || qty < 1) qty = 1;
+    const added = addCardToCart(card, qty);
+    if (!added) return; // user cancelled
+
+    if (buyBtn) {
+        // Navigate to checkout after adding
+        navigateToCheckout();
+    } else {
+        // Provide lightweight feedback
+        try {
+            addBtn.textContent = 'Added ✓';
+            setTimeout(() => { addBtn.textContent = 'Add to Cart'; }, 1200);
+        } catch {}
+    }
+});
+
+function navigateToCheckout() {
+    try {
+        const path = (window.location.pathname || '').toLowerCase();
+        if (path.includes('/components/')) {
+            window.location.href = '../checkout.html';
+        } else {
+            window.location.href = 'checkout.html';
+        }
+    } catch {
+        // Fallback
+        window.location.href = 'checkout.html';
+    }
+}
