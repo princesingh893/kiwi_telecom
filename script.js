@@ -613,31 +613,24 @@ document.addEventListener('DOMContentLoaded', () => {
         setupSearch();
 
     }
-    // Create floating Add Selected button (also for component pages)
-    if (!document.getElementById('addSelectedBtn')) {
-        const btn = document.createElement('button');
-        btn.id = 'addSelectedBtn';
-        btn.textContent = 'Add Selected';
-        btn.className = 'fixed bottom-6 right-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg z-40';
-        btn.addEventListener('click', () => {
-            const cards = Array.from(document.querySelectorAll('.product-card'));
-            const selected = cards.filter(c => c.querySelector('[data-select]')?.checked);
-            if (!selected.length) {
-                alert('Select at least one product.');
-                return;
-            }
-            let addedCount = 0;
-            selected.forEach(card => {
-                const qtyInput = card.querySelector('[data-qty]');
-                let qty = parseInt(qtyInput?.value || '1', 10);
-                if (!Number.isFinite(qty) || qty < 1) qty = 1;
-                addCardToCart(card, qty);
-                addedCount += 1;
-            });
-            alert(`Added ${addedCount} product(s) to cart.`);
-        });
-        document.body.appendChild(btn);
-    }
+    // Ensure stable styles for floating action buttons across breakpoints
+    try {
+        if (!document.getElementById('kiwi-floating-styles')) {
+            const style = document.createElement('style');
+            style.id = 'kiwi-floating-styles';
+            style.textContent = `
+                .kiwi-floating { position: fixed; bottom: 1.5rem; right: 1rem; z-index: 9999; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+                .kiwi-floating + .kiwi-floating { right: 10.5rem; } /* when two buttons present */
+            `;
+            document.head.appendChild(style);
+        }
+    } catch {}
+    // Remove floating buttons if present and stop creating them
+    try { document.getElementById('addSelectedBtn')?.remove(); } catch {}
+    try { document.getElementById('buySelectedBtn')?.remove(); } catch {}
+
+    // Setup side menu collapsible sections
+    setupSideMenuToggles();
 });
 
 // ---------------- Cart Management (Index Page) ----------------
@@ -663,9 +656,15 @@ function addCardToCart(cardEl, forcedQty) {
     }
     if (!Number.isFinite(qty) || qty < 1) qty = 1;
 
-    const item = { name, price, image: img, category, qty };
     const cart = loadCartIndex();
-    cart.push(item); // Always add as a new line item
+    // Block duplicate items by name (and category if present)
+    const exists = cart.some(it => (it.name || '').toLowerCase() === name.toLowerCase() && (it.category || '') === category);
+    if (exists) {
+        alert(`${name} is already in your cart.`);
+        return null;
+    }
+    const item = { name, price, image: img, category, qty };
+    cart.push(item);
     saveCartIndex(cart);
     return item;
 }
@@ -694,18 +693,158 @@ document.addEventListener('click', (e) => {
             setTimeout(() => { addBtn.textContent = 'Add to Cart'; }, 1200);
         } catch {}
     }
+    // Uncheck selection for this card after action
+    try { card.querySelector('[data-select]').checked = false; } catch {}
 });
 
 function navigateToCheckout() {
     try {
         const path = (window.location.pathname || '').toLowerCase();
         if (path.includes('/components/')) {
-            window.location.href = '../checkout.html';
+            window.location.href = '../checkout.html?openOrder=1';
         } else {
-            window.location.href = 'checkout.html';
+            window.location.href = 'checkout.html?openOrder=1';
         }
     } catch {
         // Fallback
-        window.location.href = 'checkout.html';
+        window.location.href = 'checkout.html?openOrder=1';
     }
+}
+
+// -------- Side Menu: Render Your Cart Preview --------
+function setupSideMenuToggles() {
+    // Your Cart elements
+    const cartToggle = document.getElementById('sideCartToggle');
+    const cartContent = document.getElementById('sideCartContent');
+    const cartChevron = document.getElementById('sideCartChevron');
+    const cartSection = document.getElementById('sideCartSection');
+    const sideScroll = document.getElementById('sideMenuScroll');
+    // About Us elements
+    const aboutToggle = document.getElementById('aboutToggle');
+    const aboutContent = document.getElementById('aboutContent');
+    const aboutChevron = document.getElementById('aboutChevron');
+    const aboutSection = document.getElementById('aboutSection');
+
+    // About Us toggle
+    if (aboutToggle && aboutContent && aboutChevron) {
+        const aboutHandleToggle = () => {
+            const isHidden = aboutContent.classList.contains('hidden');
+            aboutContent.classList.toggle('hidden');
+            aboutChevron.textContent = isHidden ? '▾' : '▸';
+        };
+        aboutToggle.addEventListener('click', aboutHandleToggle);
+        aboutSection?.addEventListener('click', (ev) => {
+            if ((ev.target instanceof Element) && ev.target.closest('#aboutContent')) return;
+            if ((ev.target instanceof Element) && ev.target.closest('#aboutToggle')) return;
+            aboutHandleToggle();
+        });
+    }
+
+    // Your Cart toggle
+    if (cartToggle && cartContent && cartChevron) {
+        const cartHandleToggle = () => {
+            const isHidden = cartContent.classList.contains('hidden');
+            cartContent.classList.toggle('hidden');
+            cartChevron.textContent = isHidden ? '▾' : '▸';
+            if (isHidden) {
+                // If opening, ensure latest cart is shown
+                renderSideCart();
+                try {
+                    const cart = loadCartIndex();
+                    if (!cart || cart.length === 0) {
+                        // Scroll to top so categories are visible
+                        sideScroll?.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                } catch {}
+            }
+        };
+        cartToggle.addEventListener('click', cartHandleToggle);
+        cartSection?.addEventListener('click', (ev) => {
+            if ((ev.target instanceof Element) && ev.target.closest('#sideCartContent')) return;
+            if ((ev.target instanceof Element) && ev.target.closest('#sideCartToggle')) return;
+            cartHandleToggle();
+        });
+    }
+}
+
+// Render Your Cart preview in side menu
+function renderSideCart() {
+    try {
+        const container = document.getElementById('sideCartItems');
+        const countBadge = document.getElementById('sideCartCount');
+        if (!container && !countBadge) return; // nothing to do
+        const cart = loadCartIndex();
+        if (countBadge) countBadge.textContent = String(cart.length);
+        if (!container) return;
+        if (!cart.length) {
+            container.innerHTML = '<div class="text-sm text-gray-500">Your cart is empty.</div>';
+            return;
+        }
+        container.innerHTML = cart.map((it, i) => `
+            <div class="flex items-center gap-3 py-2 border-b last:border-b-0">
+                <img src="${it.image}" alt="${it.name}" class="w-12 h-12 object-contain bg-white rounded" />
+                <div class="flex-1">
+                    <div class="text-sm font-medium line-clamp-2">${it.name}</div>
+                    <div class="text-xs text-gray-600">${it.category} • Qty: ${it.qty || 1}</div>
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                    <div class="text-sm font-semibold whitespace-nowrap">${it.price}</div>
+                    <button class="text-xs text-red-600 hover:text-red-700" data-side-remove="${i}">Remove</button>
+                </div>
+            </div>
+        `).join('');
+
+        // Wire remove buttons
+        container.querySelectorAll('[data-side-remove]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = Number(btn.getAttribute('data-side-remove'));
+                const c = loadCartIndex();
+                if (idx >= 0 && idx < c.length) {
+                    c.splice(idx, 1);
+                    saveCartIndex(c);
+                    if (countBadge) countBadge.textContent = String(c.length);
+                    renderSideCart();
+                }
+            });
+        });
+    } catch {}
+}
+
+// Populate side cart when menu opens
+menuBtn?.addEventListener('click', () => {
+    // allow opening animation then render
+    setTimeout(renderSideCart, 50);
+});
+
+// Utility: add all selected product cards to cart
+function addSelectedToCart(options = {}) {
+    const { uncheckAfter = false } = options;
+    const cards = Array.from(document.querySelectorAll('.product-card'));
+    const selected = cards.filter(c => c.querySelector('[data-select]')?.checked);
+    const selectedCount = selected.length;
+    let addedCount = 0;
+    const skippedNames = [];
+    // Build a set of existing names in cart to avoid multiple alerts
+    const cart = loadCartIndex();
+    const existing = new Set(cart.map(it => `${(it.category || '')}|||${(it.name || '').toLowerCase()}`));
+    selected.forEach(card => {
+        const name = card.querySelector('h3')?.textContent?.trim() || '';
+        const category = card.getAttribute('data-category') || '';
+        const key = `${category}|||${name.toLowerCase()}`;
+        if (existing.has(key)) {
+            skippedNames.push(name);
+            if (uncheckAfter) { try { card.querySelector('[data-select]').checked = false; } catch {} }
+            return;
+        }
+        const qtyInput = card.querySelector('[data-qty]');
+        let qty = parseInt(qtyInput?.value || '1', 10);
+        if (!Number.isFinite(qty) || qty < 1) qty = 1;
+        const added = addCardToCart(card, qty);
+        if (added) {
+            existing.add(key);
+            addedCount += 1;
+            if (uncheckAfter) { try { card.querySelector('[data-select]').checked = false; } catch {} }
+        }
+    });
+    return { addedCount, skippedNames, selectedCount };
 }

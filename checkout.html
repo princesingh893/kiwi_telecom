@@ -63,6 +63,10 @@
           <input id="custName" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Your full name" />
         </div>
         <div>
+          <label class="block text-sm text-gray-700 mb-1">Mobile Number</label>
+          <input id="custMobile" type="tel" maxlength="15" class="w-full border rounded-lg px-3 py-2" placeholder="10-digit mobile number" />
+        </div>
+        <div>
           <label class="block text-sm text-gray-700 mb-1">Address</label>
           <textarea id="custAddress" rows="3" class="w-full border rounded-lg px-3 py-2" placeholder="House, Street, City, Pincode"></textarea>
         </div>
@@ -273,9 +277,11 @@
 
     submitOrder.addEventListener('click', async () => {
       const name = (document.getElementById('custName').value || '').trim();
+      const mobile = (document.getElementById('custMobile').value || '').trim();
       const address = (document.getElementById('custAddress').value || '').trim();
-      if (!name || !address) {
-        alert('Please enter your name and address.');
+      const mobileOk = /^\+?[0-9\s-]{10,15}$/.test(mobile.replace(/\s|-/g, '')) && mobile.replace(/\D/g,'').length >= 10;
+      if (!name || !mobileOk || !address) {
+        alert('Please enter your Name, valid Mobile number, and Address.');
         return;
       }
 
@@ -291,11 +297,10 @@
         name: it.name,
         category: it.category,
         price: parsePrice(it.price),
-        qty: it.qty || 1,
-        lineTotal: parsePrice(it.price) * (it.qty || 1)
+        qty: it.qty || 1
       }));
 
-      const payload = { date: dateIso, name, address, subtotal, shipping, total, items };
+      const payload = { date: dateIso, name, mobile, address, subtotal, shipping, total, items };
 
       // Disable actions while sending
       submitOrder.disabled = true; submitOrder.textContent = 'Placing...';
@@ -335,6 +340,16 @@
 
     // init
     render();
+    // If navigated with openOrder=1 and cart has items, open modal automatically
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      if (params.get('openOrder') === '1') {
+        const c = loadCart();
+        if (c && c.length) {
+          openOrderModal();
+        }
+      }
+    } catch {}
   </script>
 </body>
 </html>
