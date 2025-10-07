@@ -264,7 +264,8 @@ function getProducts(categoryId) {
 function createProductCard(product, categoryId) {
     return `
         <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
-            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
+                <span data-in-cart-badge class="hidden absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full border border-green-300">In Cart</span>
                 <img src="${product.image}" alt="${product.name}" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
                 ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
@@ -461,6 +462,34 @@ function initializeProductSections() {
     });
 }
 
+// Update badges and button states to reflect which items are in cart
+function updateInCartBadges() {
+    try {
+        const cart = loadCartIndex();
+        const existing = new Set(cart.map(it => `${(it.category || '')}|||${(it.name || '').toLowerCase()}`));
+        document.querySelectorAll('.product-card').forEach(card => {
+            const name = card.querySelector('h3')?.textContent?.trim().toLowerCase() || '';
+            const category = card.getAttribute('data-category') || '';
+            const key = `${category}|||${name}`;
+            const inCart = existing.has(key);
+            const badge = card.querySelector('[data-in-cart-badge]');
+            const addBtn = card.querySelector('[data-action="add"]');
+            if (badge) badge.classList.toggle('hidden', !inCart);
+            if (addBtn) {
+                if (inCart) {
+                    addBtn.setAttribute('disabled', 'true');
+                    addBtn.classList.add('opacity-60', 'cursor-not-allowed');
+                    addBtn.textContent = 'In Cart';
+                } else {
+                    addBtn.removeAttribute('disabled');
+                    addBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+                    addBtn.textContent = 'Add to Cart';
+                }
+            }
+        });
+    } catch {}
+}
+
 // ---------------- Search & Filter ----------------
 function setupSearch() {
     const input = document.getElementById('searchInput');
@@ -587,8 +616,6 @@ if (slides) {
         showSlide(index);
     }, 3000);
 }
-
-// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     if (!window.SKIP_INIT) {
         initializeProductSections();
@@ -619,19 +646,81 @@ document.addEventListener('DOMContentLoaded', () => {
             const style = document.createElement('style');
             style.id = 'kiwi-floating-styles';
             style.textContent = `
-                .kiwi-floating { position: fixed; bottom: 1.5rem; right: 1rem; z-index: 9999; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+                .kiwi-floating { position: fixed; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); right: 1rem; z-index: 9999; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
                 .kiwi-floating + .kiwi-floating { right: 10.5rem; } /* when two buttons present */
+                #kiwi-floating-spacer { height: 5.5rem; }
             `;
             document.head.appendChild(style);
         }
     } catch {}
-    // Remove floating buttons if present and stop creating them
-    try { document.getElementById('addSelectedBtn')?.remove(); } catch {}
-    try { document.getElementById('buySelectedBtn')?.remove(); } catch {}
+
+    // Create floating multi-select buttons
+    createFloatingButtons();
 
     // Setup side menu collapsible sections
     setupSideMenuToggles();
+    // Reflect existing cart state on product cards
+    updateInCartBadges();
 });
+
+// Create floating action buttons for multi-select add/buy
+function createFloatingButtons() {
+    try {
+        const path = (window.location.pathname || '').toLowerCase();
+        // Don't show on checkout page
+        if (path.endsWith('/checkout.html') || path.endsWith('checkout.html')) return;
+
+        let addBtn = document.getElementById('addSelectedBtn');
+        let buyBtn = document.getElementById('buySelectedBtn');
+
+        if (!addBtn) {
+            addBtn = document.createElement('button');
+            addBtn.id = 'addSelectedBtn';
+            addBtn.className = 'kiwi-floating bg-gray-800 text-white px-4 py-3 text-sm font-medium hover:bg-gray-700 active:scale-[.98]';
+            addBtn.textContent = 'Add Selected';
+            addBtn.title = 'Add all selected items to cart';
+            addBtn.addEventListener('click', () => {
+                const { addedCount, skippedNames, selectedCount } = addSelectedToCart({ uncheckAfter: true });
+                if (!selectedCount) { alert('No items selected.'); return; }
+                if (addedCount) {
+                    // Quick feedback
+                    try { addBtn.textContent = `Added ${addedCount}`; setTimeout(() => addBtn.textContent = 'Add Selected', 1200); } catch {}
+                }
+                if (skippedNames && skippedNames.length) {
+                    // Optional: keep it silent or inform minimal
+                    console.log('Skipped (already in cart):', skippedNames);
+                }
+                // Update badges and states
+                updateInCartBadges();
+            });
+            document.body.appendChild(addBtn);
+        }
+
+        if (!buyBtn) {
+            buyBtn = document.createElement('button');
+            buyBtn.id = 'buySelectedBtn';
+            buyBtn.className = 'kiwi-floating bg-blue-600 text-white px-4 py-3 text-sm font-medium hover:bg-blue-700 active:scale-[.98]';
+            buyBtn.textContent = 'Buy Selected';
+            buyBtn.title = 'Add selected items and go to checkout';
+            buyBtn.addEventListener('click', () => {
+                const { addedCount, selectedCount } = addSelectedToCart({ uncheckAfter: true });
+                if (!selectedCount) { alert('No items selected.'); return; }
+                // Proceed to checkout whether newly added or already present
+                updateInCartBadges();
+                navigateToCheckout();
+            });
+            document.body.appendChild(buyBtn);
+        }
+        // Ensure bottom spacer exists so floating buttons don't cover last product
+        if (!document.getElementById('kiwi-floating-spacer')) {
+            const spacer = document.createElement('div');
+            spacer.id = 'kiwi-floating-spacer';
+            // place near end of body so layout reserves space
+            spacer.style.width = '100%';
+            document.body.appendChild(spacer);
+        }
+    } catch {}
+}
 
 // ---------------- Cart Management (Index Page) ----------------
 // These helpers are used on index.html only; checkout.html defines its own helpers.
@@ -690,11 +779,13 @@ document.addEventListener('click', (e) => {
         // Provide lightweight feedback
         try {
             addBtn.textContent = 'Added ✓';
-            setTimeout(() => { addBtn.textContent = 'Add to Cart'; }, 1200);
+            setTimeout(() => { if (!addBtn.hasAttribute('disabled')) addBtn.textContent = 'Add to Cart'; }, 1200);
         } catch {}
     }
     // Uncheck selection for this card after action
     try { card.querySelector('[data-select]').checked = false; } catch {}
+    // Update badges and button states
+    updateInCartBadges();
 });
 
 function navigateToCheckout() {
@@ -780,8 +871,20 @@ function renderSideCart() {
             container.innerHTML = '<div class="text-sm text-gray-500">Your cart is empty.</div>';
             return;
         }
-        container.innerHTML = cart.map((it, i) => `
+        // Toolbar for multi-select actions
+        const toolbar = `
+            <div id="sideCartToolbar" class="flex items-center justify-between py-2 border-b mb-1">
+                <label class="flex items-center gap-2 text-sm">
+                    <input id="sideCartSelectAll" type="checkbox" />
+                    <span>Select All</span>
+                </label>
+                <button id="sideCartRemoveSelected" class="text-xs px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700">Remove Selected</button>
+            </div>
+        `;
+        // Items list with individual checkboxes
+        const itemsHtml = cart.map((it, i) => `
             <div class="flex items-center gap-3 py-2 border-b last:border-b-0">
+                <input type="checkbox" class="side-cart-select" data-index="${i}" />
                 <img src="${it.image}" alt="${it.name}" class="w-12 h-12 object-contain bg-white rounded" />
                 <div class="flex-1">
                     <div class="text-sm font-medium line-clamp-2">${it.name}</div>
@@ -793,6 +896,7 @@ function renderSideCart() {
                 </div>
             </div>
         `).join('');
+        container.innerHTML = toolbar + itemsHtml;
 
         // Wire remove buttons
         container.querySelectorAll('[data-side-remove]').forEach(btn => {
@@ -804,9 +908,36 @@ function renderSideCart() {
                     saveCartIndex(c);
                     if (countBadge) countBadge.textContent = String(c.length);
                     renderSideCart();
+                    updateInCartBadges();
                 }
             });
         });
+        // Wire Select All and Remove Selected
+        const selectAll = container.querySelector('#sideCartSelectAll');
+        const removeSelected = container.querySelector('#sideCartRemoveSelected');
+        const itemCheckboxes = Array.from(container.querySelectorAll('.side-cart-select'));
+        if (selectAll) {
+            selectAll.addEventListener('change', () => {
+                const checked = !!selectAll.checked;
+                itemCheckboxes.forEach(cb => { cb.checked = checked; });
+            });
+        }
+        if (removeSelected) {
+            removeSelected.addEventListener('click', () => {
+                const toRemove = itemCheckboxes
+                    .filter(cb => cb.checked)
+                    .map(cb => Number(cb.getAttribute('data-index')))
+                    .filter(i => Number.isFinite(i))
+                    .sort((a,b) => b - a); // remove from end to start
+                if (!toRemove.length) return;
+                const c = loadCartIndex();
+                toRemove.forEach(i => { if (i >= 0 && i < c.length) c.splice(i, 1); });
+                saveCartIndex(c);
+                if (countBadge) countBadge.textContent = String(c.length);
+                renderSideCart();
+                updateInCartBadges();
+            });
+        }
     } catch {}
 }
 

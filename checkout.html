@@ -208,7 +208,8 @@
     const successOk = document.getElementById('successOk');
 
     // Configure your Google Apps Script Web App URL here
-    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyCt3X19U97mIpkANniz5uJhJ-BTRph_XrQ87-aWYO0DoKwLqFJIyeohtCaHPe36CIz/exec';
+    // const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyCt3X19U97mIpkANniz5uJhJ-BTRph_XrQ87-aWYO0DoKwLqFJIyeohtCaHPe36CIz/exec';
+    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxdtP-8_O7toU_ctN7zNu-UV8vf3njzdmRE_s5KGHQ/dev';
 
     function openOrderModal() {
       orderModal.classList.remove('hidden');
@@ -289,7 +290,8 @@
       if (!cart.length) { closeModal(); return; }
 
       // Build payload
-      const dateIso = new Date().toISOString();
+      // Date-only (no time) for Sheets
+      const dateOnly = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
       const shipping = 0;
       const subtotal = cart.reduce((s, it) => s + parsePrice(it.price) * (it.qty || 1), 0);
       const total = subtotal + shipping;
@@ -300,7 +302,30 @@
         qty: it.qty || 1
       }));
 
-      const payload = { date: dateIso, name, mobile, address, subtotal, shipping, total, items };
+      // New flat rows for Google Sheets (each item one row)
+      // Columns (exact labels as requested):
+      // Date, Name, Address, Mobile Number, Item Name, Catergory, Unit Price, Quantity, Order Total
+      const rowsV2 = cart.map(it => [
+        dateOnly,
+        name.toUpperCase(),
+        address.toUpperCase(),
+        mobile.toUpperCase(),
+        it.name, // keep product name as-is (case preserved)
+        (it.category || '').toUpperCase(),
+        parsePrice(it.price),
+        (it.qty || 1),
+        total
+      ]);
+      const columnsV2 = ['Date','Name','Address','Mobile Number','Item Name','Catergory','Unit Price','Quantity','Order Total'];
+
+      // Keep old structure for backward compatibility, but include new fields preferred for Sheets
+      const payload = { 
+        date: dateOnly, // previously ISO; now date-only
+        name, mobile, address, subtotal, shipping, total, items,
+        format: 'flat_v2',
+        columnsV2,
+        rowsV2
+      };
 
       // Disable actions while sending
       submitOrder.disabled = true; submitOrder.textContent = 'Placing...';
