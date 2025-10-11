@@ -29,6 +29,7 @@
   <script>
     window.SKIP_INIT = true;
   </script>
+  <script src="../config.js"></script>
   <script src="../script.js"></script>
   <!-- Side Menu -->
   <nav id="sideMenu" class="fixed top-0 left-0 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
@@ -55,7 +56,8 @@
   </nav>
   <div id="overlay" class="hidden fixed inset-0 bg-transparent z-40"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      try { await (window.KIWI_PRODUCTS_READY || Promise.resolve()); } catch {}
       const category = 'speakers';
       const items = getProducts(category);
       const grid = document.getElementById('productsGrid');

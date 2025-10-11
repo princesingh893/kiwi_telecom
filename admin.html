@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - KIWI Telecom</title>
+  <link rel="stylesheet" href="src/output.css" />
+  <style>
+    .container { max-width: 1100px; }
+    .muted { color: #6b7280; }
+    .tag { font-size: 11px; padding: 2px 6px; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="index.html" class="text-xl font-bold text-blue-600">KIWI Telecom</a>
+      <span class="text-sm muted">Admin Panel</span>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-6 space-y-6">
+    <section class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-3">Firebase Setup</h2>
+      <p class="text-sm text-gray-600">Ensure <code>config.js</code> has <code>window.FIREBASE_CONFIG</code> set. Without it, login and CRUD will be disabled.</p>
+      <div id="firebaseStatus" class="mt-2 text-sm"></div>
+    </section>
+
+    <section class="bg-white p-4 rounded shadow">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold">Authentication</h2>
+        <div class="space-x-2">
+          <button id="loginBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded">Login</button>
+          <button id="logoutBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hidden">Logout</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end mb-3">
+        <div>
+          <label class="block text-sm font-medium mb-1" for="adminEmail">Email</label>
+          <input id="adminEmail" type="email" class="w-full border rounded px-3 py-2" placeholder="admin@example.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1" for="adminPass">Password</label>
+          <input id="adminPass" type="password" class="w-full border rounded px-3 py-2" placeholder="Password">
+        </div>
+        <div class="flex gap-2">
+          <button id="doLogin" class="px-3 py-2 bg-blue-600 text-white rounded w-full md:w-auto">Sign in</button>
+          <button id="doReset" class="px-3 py-2 bg-gray-100 text-gray-800 rounded w-full md:w-auto">Reset Password</button>
+        </div>
+      </div>
+      <div id="authError" class="hidden text-sm text-red-700 mb-2"></div>
+      <div id="authInfo" class="text-sm text-gray-700">Not signed in.</div>
+    </section>
+
+    <section class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-3">Add / Update Product</h2>
+      <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Name</label>
+          <input id="pName" type="text" class="w-full border rounded px-3 py-2" placeholder="Product name" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Price</label>
+          <input id="pPrice" type="text" class="w-full border rounded px-3 py-2" placeholder="₹999" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Image URL</label>
+          <input id="pImage" type="url" class="w-full border rounded px-3 py-2" placeholder="https://..." />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Category</label>
+          <select id="pCategory" class="w-full border rounded px-3 py-2">
+            <option value="">Select category</option>
+            <option value="earbuds">Earbuds</option>
+            <option value="neckbands">Neckbands</option>
+            <option value="earphones">Earphones</option>
+            <option value="speakers">Wireless Speakers</option>
+            <option value="powerbanks">Powerbank</option>
+            <option value="powerbankCables">Powerbank Cables</option>
+            <option value="chargers">Chargers</option>
+            <option value="batteries">Battery</option>
+            <option value="dataCables">Data Cables</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Or upload image</label>
+          <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+            <input id="pImageFile" type="file" accept="image/*" class="border rounded px-3 py-2 w-full sm:w-auto" />
+            <button type="button" id="uploadImageBtn" class="px-3 py-2 bg-gray-100 text-gray-800 rounded">Upload to Storage</button>
+            <span id="uploadStatus" class="text-sm text-gray-600"></span>
+          </div>
+        </div>
+        <div class="md:col-span-2 flex items-center gap-3">
+          <button id="saveProduct" type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Save Product</button>
+          <span id="formMsg" class="text-sm"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="bg-white p-4 rounded shadow">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold">Storefront Products (All)</h2>
+        <div class="text-sm text-gray-500">This shows what the website renders (hardcoded + backend).</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left p-2">Image</th>
+              <th class="text-left p-2">Category</th>
+              <th class="text-left p-2">Name</th>
+              <th class="text-left p-2">Price</th>
+              <th class="text-left p-2">Status</th>
+              <th class="text-left p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="storefrontTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bg-white p-4 rounded shadow">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold">All Products</h2>
+        <div class="text-sm text-gray-500">Hide/Unhide will toggle visibility on the live site.</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left p-2">Name</th>
+              <th class="text-left p-2">Price</th>
+              <th class="text-left p-2">Category</th>
+              <th class="text-left p-2">Status</th>
+              <th class="text-right p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script>
+    // Prevent storefront auto init on admin page; we will call rendering manually
+    window.SKIP_INIT = true;
+  </script>
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

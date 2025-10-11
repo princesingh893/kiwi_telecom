@@ -252,8 +252,8 @@ const productsByCategory = {
     }
 };
 
-// ---------------- Google Sheets Integration ----------------
-// Normalize category names from sheet to our internal category IDs
+// ---------------- Dynamic Backend Integration (Firebase optional) ----------------
+// Normalize category names to our internal category IDs
 const CATEGORY_IDS = new Set([
     'dataCables', 'chargers', 'earphones', 'earbuds', 'neckbands', 'speakers', 'powerbankCables', 'batteries', 'powerbanks'
 ]);
@@ -308,12 +308,12 @@ function normalizeRowToProduct(row) {
     return { name, price, image, categoryId };
 }
 
-function mergeSheetProducts(products) {
-    // Insert sheet products at the beginning of each category list so admin items appear first
+function mergeBackendProducts(products) {
+    // Insert backend products at the beginning of each category list so admin items appear first
     const grouped = {};
     products.forEach(p => {
         if (!grouped[p.categoryId]) grouped[p.categoryId] = [];
-        grouped[p.categoryId].push({ name: p.name, price: p.price, image: p.image });
+        grouped[p.categoryId].push({ name: p.name, price: p.price, image: p.image, description: p.description, hidden: !!p.hidden, id: p.id || null });
     });
     Object.entries(grouped).forEach(([cat, items]) => {
         if (!productsByCategory[cat]) {
@@ -327,27 +327,53 @@ function mergeSheetProducts(products) {
     });
 }
 
-async function loadProductsFromSheet() {
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+    });
+}
+
+async function loadProductsFromBackend() {
+    // If Firebase config not provided, skip (fallback to hardcoded products)
+    if (!window.FIREBASE_CONFIG) return;
     try {
-        const url = (window && window.SHEET_API) ? String(window.SHEET_API) : '';
-        if (!url) return;
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to fetch sheet');
-        const data = await res.json().catch(() => ({}));
-        // Accept either {data: [...] } or array directly
-        const rows = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : (Array.isArray(data.rows) ? data.rows : []));
-        if (!rows.length) return;
-        const normalized = rows.map(normalizeRowToProduct).filter(Boolean);
-        if (!normalized.length) return;
-        mergeSheetProducts(normalized);
+        // Load Firebase compat SDKs (safe for non-module pages)
+        await loadScript('https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js');
+        await loadScript('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js');
+
+        if (!window.firebase) throw new Error('Firebase SDK failed to load');
+        const app = firebase.apps?.length ? firebase.app() : firebase.initializeApp(window.FIREBASE_CONFIG);
+        const db = firebase.firestore(app);
+
+        // Read products collection; only items not hidden
+        const snap = await db.collection('products').where('hidden', '==', false).get().catch(async (err) => {
+            // If no field/where error or missing index, fallback to full collection and local filter
+            const s2 = await db.collection('products').get();
+            return { docs: s2.docs };
+        });
+        const items = (snap.docs || []).map(d => ({ id: d.id, ...(d.data() || {}) }));
+        const normalized = items.map(row => {
+            const name = String(row.name || '').trim();
+            const price = String(row.price || '').trim();
+            const image = String(row.image || '').trim();
+            const rawCat = String(row.categoryId || row.category || '').trim();
+            const categoryId = normalizeCategoryId(rawCat);
+            const description = String(row.description || '').trim();
+            const hidden = !!row.hidden;
+            if (!name || !price || !image || !categoryId) return null;
+            return { id: row.id, name, price, image, description, categoryId, hidden };
+        }).filter(Boolean);
+        if (normalized.length) {
+            mergeBackendProducts(normalized);
+        }
     } catch (e) {
-        // Fail quietly; hardcoded products remain
-        console.warn('Sheet load failed or returned no data:', e?.message || e);
+        console.warn('Backend load failed:', e?.message || e);
     }
 }
 
 // Kick off loading early so both index and category pages can await
-try { window.KIWI_PRODUCTS_READY = loadProductsFromSheet(); } catch {}
+try { window.KIWI_PRODUCTS_READY = loadProductsFromBackend(); } catch {}
 
 function getCategoryTitle(categoryId) {
     return productsByCategory[categoryId]?.title || categoryId;
@@ -357,13 +383,22 @@ function getProducts(categoryId) {
     return productsByCategory[categoryId]?.products || [];
 }
 
+// Ensure external image URLs are safe and encode '+' which some CDNs misinterpret
+function getSafeImageUrl(url) {
+    try {
+        const s = String(url || '');
+        // Encode '+' which may be treated as space by some CDNs
+        return s.replace(/\+/g, '%2B');
+    } catch { return url; }
+}
+
 // Function to create a product card
 function createProductCard(product, categoryId) {
     return `
         <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
                 <span data-in-cart-badge class="hidden absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full border border-green-300">In Cart</span>
-                <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+                <img src="${getSafeImageUrl(product.image)}" alt="${product.name}" loading="lazy" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4" onerror="this.onerror=null;this.src='images/logo.png';">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
                 ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
                 <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">${product.price}</p>

@@ -31,9 +31,11 @@
     // Prevent auto-initialization from script.js on this page
     window.SKIP_INIT = true;
   </script>
+  <script src="../config.js"></script>
   <script src="../script.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      try { await (window.KIWI_PRODUCTS_READY || Promise.resolve()); } catch {}
       const category = 'batteries';
       const items = getProducts(category);
       const grid = document.getElementById('productsGrid');

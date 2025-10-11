@@ -228,8 +228,6 @@
   </style>
   <link rel="stylesheet" href="src/output.css">
   <!-- Performance: preconnect/dns-prefetch to external assets -->
-  <link rel="preconnect" href="https://script.google.com" crossorigin>
-  <link rel="dns-prefetch" href="//script.google.com">
   <link rel="preconnect" href="https://kdmindia.in" crossorigin>
   <link rel="dns-prefetch" href="//kdmindia.in">
   <link rel="preconnect" href="https://images-cdn.ubuy.co.in" crossorigin>
@@ -248,6 +246,7 @@
     <button id="menuBtn" class="text-3xl hover:text-blue-600 transition">☰</button>
     <div class="flex items-center gap-4">
       <img src="images/logo.png" alt="Logo" class="h-12">
+      <button id="adminOpen" class="hidden sm:inline-flex px-3 py-2 text-sm font-medium border rounded-lg hover:bg-gray-50">Admin</button>
     </div>
   </header>
 
@@ -463,12 +462,59 @@
   <!-- Transparent Overlay -->
   <div id="overlay" class="hidden fixed inset-0 bg-transparent z-40"></div>
 
+  <!-- Admin Password Modal -->
+  <div id="adminModal" class="hidden fixed inset-0 z-[60] items-center justify-center">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-white rounded-lg shadow-xl w-[90%] max-w-sm mx-auto p-5">
+      <h3 class="text-lg font-semibold mb-2">Admin Login</h3>
+      <p class="text-sm text-gray-600 mb-3">Enter admin password to continue.</p>
+      <input id="adminPwd" type="password" class="w-full border rounded px-3 py-2 mb-3" placeholder="Password" />
+      <div id="adminErr" class="hidden text-sm text-red-600 mb-2">Incorrect password.</div>
+      <div class="flex justify-end gap-2">
+        <button id="adminCancel" class="px-3 py-2 text-sm border rounded-lg">Cancel</button>
+        <button id="adminGo" class="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg">Enter</button>
+      </div>
+    </div>
+  </div>
+
       <!-- JS -->
   <script>
     window.SKIP_INIT = false;
-    window.SHEET_API = 'https://script.google.com/macros/s/AKfycby_svqS-P_NA7pJIeCAAhUu2Hi9kd4ca9Vu--MKVEnVgc5Nebmr8Ugd2FHwbvCoT6n8/exec';
   </script>
+  <script src="config.js"></script>
   <script src="script.js"></script>
+  <script>
+    // Simple password gate for admin.html based on window.ADMIN_PASS set in config.js
+    (function(){
+      const btn = document.getElementById('adminOpen');
+      const modal = document.getElementById('adminModal');
+      const pwd = document.getElementById('adminPwd');
+      const go = document.getElementById('adminGo');
+      const cancel = document.getElementById('adminCancel');
+      const err = document.getElementById('adminErr');
+
+      function openModal(){ modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => { try { pwd.focus(); } catch{} }, 0); }
+      function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); err.classList.add('hidden'); pwd.value = ''; }
+      function enter(){
+        const expected = (window.ADMIN_PASS || '').trim();
+        if (!expected){
+          alert('Admin password not set. Please set window.ADMIN_PASS in config.js');
+          return;
+        }
+        if ((pwd.value||'').trim() === expected){
+          try { sessionStorage.setItem('kiwi_admin', '1'); } catch{}
+          window.location.href = 'admin.html';
+        } else {
+          err.classList.remove('hidden');
+        }
+      }
+
+      btn?.addEventListener('click', openModal);
+      cancel?.addEventListener('click', closeModal);
+      go?.addEventListener('click', enter);
+      pwd?.addEventListener('keydown', (e) => { if (e.key === 'Enter') enter(); });
+    })();
+  </script>
 </body>
 
 </html>
