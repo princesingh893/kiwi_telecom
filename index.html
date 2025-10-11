@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>KIWI Telecom</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <style>
     /* Custom scrollbar for horizontal scroll */
+    /* ... */
     .hide-scrollbar {
       -ms-overflow-style: none;  /* IE and Edge */
       scrollbar-width: none;  /* Firefox */
@@ -224,6 +227,19 @@
     }
   </style>
   <link rel="stylesheet" href="src/output.css">
+  <!-- Performance: preconnect/dns-prefetch to external assets -->
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="dns-prefetch" href="//script.google.com">
+  <link rel="preconnect" href="https://kdmindia.in" crossorigin>
+  <link rel="dns-prefetch" href="//kdmindia.in">
+  <link rel="preconnect" href="https://images-cdn.ubuy.co.in" crossorigin>
+  <link rel="dns-prefetch" href="//images-cdn.ubuy.co.in">
+  <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
+  <link rel="dns-prefetch" href="//m.media-amazon.com">
+  <link rel="preconnect" href="https://wallpapers.com" crossorigin>
+  <link rel="dns-prefetch" href="//wallpapers.com">
+  <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//encrypted-tbn0.gstatic.com">
 </head>
 
 <body class="bg-gray-50 text-gray-900 max-w-[1400px] mx-auto font-sans">
@@ -281,19 +297,19 @@
     <div class="flex transition-transform duration-700 ease-in-out h-full" id="slides">
       <img
         src="images/neckbandslider.png"
-        class="w-full h-full object-cover" />
+        class="w-full h-full object-cover" loading="eager" fetchpriority="high" decoding="async" />
       <img
         src="images/earbuds.png"
-        class="w-full h-full object-cover" />
+        class="w-full h-full object-cover" loading="lazy" decoding="async" />
       <img
         src="images/chargers.png"
-        class="w-full h-full object" />
+        class="w-full h-full object" loading="lazy" decoding="async" />
       <img
         src="images/speakerwithcharger.png"
-        class="w-full h-full object-cover" />
+        class="w-full h-full object-cover" loading="lazy" decoding="async" />
       <img
         src="images/speakerwithbluetooth.png"
-        class="w-full h-full object-cover" />
+        class="w-full h-full object-cover" loading="lazy" decoding="async" />
     </div>
 
     <!-- Buttons -->
@@ -450,7 +466,7 @@
       <!-- JS -->
   <script>
     window.SKIP_INIT = false;
-    window.SHEET_API = 'https://script.google.com/macros/s/AKfycbyItRYxjUwQj56JUotaVDEq_8tNxbJujpgAatimV3kjEjSX5MiVMvvGH9ioEoZTRmcl/exec';
+    window.SHEET_API = 'https://script.google.com/macros/s/AKfycby_svqS-P_NA7pJIeCAAhUu2Hi9kd4ca9Vu--MKVEnVgc5Nebmr8Ugd2FHwbvCoT6n8/exec';
   </script>
   <script src="script.js"></script>
 </body>

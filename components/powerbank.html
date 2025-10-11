@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -55,7 +55,8 @@
   </nav>
   <div id="overlay" class="hidden fixed inset-0 bg-transparent z-40"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      try { await (window.KIWI_PRODUCTS_READY || Promise.resolve()); } catch {}
       const category = 'powerbanks';
       const items = getProducts(category);
       const grid = document.getElementById('productsGrid');

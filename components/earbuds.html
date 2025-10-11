@@ -33,7 +33,8 @@
   <script src="../script.js"></script>
   <script>
     // Render using shared createProductCard() so selection/qty/add/buy work the same as index
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      try { await (window.KIWI_PRODUCTS_READY || Promise.resolve()); } catch {}
       const category = 'earbuds';
       const items = getProducts(category);
       const grid = document.getElementById('productsGrid');

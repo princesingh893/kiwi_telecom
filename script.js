@@ -252,6 +252,103 @@ const productsByCategory = {
     }
 };
 
+// ---------------- Google Sheets Integration ----------------
+// Normalize category names from sheet to our internal category IDs
+const CATEGORY_IDS = new Set([
+    'dataCables', 'chargers', 'earphones', 'earbuds', 'neckbands', 'speakers', 'powerbankCables', 'batteries', 'powerbanks'
+]);
+
+function normalizeCategoryId(raw) {
+    const s = String(raw || '').trim().toLowerCase();
+    if (!s) return '';
+    const map = {
+        'data cables': 'dataCables',
+        'datacables': 'dataCables',
+        'data_cables': 'dataCables',
+        'cables': 'dataCables',
+        'chargers': 'chargers',
+        'charger': 'chargers',
+        'earphones': 'earphones',
+        'earphone': 'earphones',
+        'earbuds': 'earbuds',
+        'tws': 'earbuds',
+        'neckbands': 'neckbands',
+        'neckband': 'neckbands',
+        'speakers': 'speakers',
+        'speaker': 'speakers',
+        'powerbank cables': 'powerbankCables',
+        'powerbankcables': 'powerbankCables',
+        'powerbank_cables': 'powerbankCables',
+        'batteries': 'batteries',
+        'battery': 'batteries',
+        'powerbanks': 'powerbanks',
+        'powerbank': 'powerbanks'
+    };
+    return map[s] || (CATEGORY_IDS.has(s) ? s : '');
+}
+
+function pickKey(obj, keys) {
+    for (const k of keys) {
+        if (k in obj && obj[k] != null && String(obj[k]).trim() !== '') return obj[k];
+        // try case-insensitive match
+        const found = Object.keys(obj).find(kk => kk.toLowerCase() === String(k).toLowerCase());
+        if (found && obj[found] != null && String(obj[found]).trim() !== '') return obj[found];
+    }
+    return '';
+}
+
+function normalizeRowToProduct(row) {
+    // Accept various header names commonly used in Sheets
+    const name = String(pickKey(row, ['name', 'product', 'product name', 'product_name'])).trim();
+    const price = String(pickKey(row, ['price', 'mrp', 'amount'])).trim();
+    const image = String(pickKey(row, ['image', 'img', 'img url', 'image url', 'image_url', 'img_url', 'photo'])).trim();
+    const rawCat = String(pickKey(row, ['category', 'cat', 'type', 'section'])).trim();
+    const categoryId = normalizeCategoryId(rawCat);
+    if (!name || !price || !image || !categoryId) return null;
+    return { name, price, image, categoryId };
+}
+
+function mergeSheetProducts(products) {
+    // Insert sheet products at the beginning of each category list so admin items appear first
+    const grouped = {};
+    products.forEach(p => {
+        if (!grouped[p.categoryId]) grouped[p.categoryId] = [];
+        grouped[p.categoryId].push({ name: p.name, price: p.price, image: p.image });
+    });
+    Object.entries(grouped).forEach(([cat, items]) => {
+        if (!productsByCategory[cat]) {
+            productsByCategory[cat] = { title: (cat.charAt(0).toUpperCase() + cat.slice(1)), products: [] };
+        }
+        const existing = productsByCategory[cat].products || [];
+        // Avoid duplicates by name (case-insensitive)
+        const existingNames = new Set(existing.map(it => (it.name || '').toLowerCase()));
+        const toAdd = items.filter(it => !existingNames.has((it.name || '').toLowerCase()));
+        productsByCategory[cat].products = [...toAdd, ...existing];
+    });
+}
+
+async function loadProductsFromSheet() {
+    try {
+        const url = (window && window.SHEET_API) ? String(window.SHEET_API) : '';
+        if (!url) return;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to fetch sheet');
+        const data = await res.json().catch(() => ({}));
+        // Accept either {data: [...] } or array directly
+        const rows = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : (Array.isArray(data.rows) ? data.rows : []));
+        if (!rows.length) return;
+        const normalized = rows.map(normalizeRowToProduct).filter(Boolean);
+        if (!normalized.length) return;
+        mergeSheetProducts(normalized);
+    } catch (e) {
+        // Fail quietly; hardcoded products remain
+        console.warn('Sheet load failed or returned no data:', e?.message || e);
+    }
+}
+
+// Kick off loading early so both index and category pages can await
+try { window.KIWI_PRODUCTS_READY = loadProductsFromSheet(); } catch {}
+
 function getCategoryTitle(categoryId) {
     return productsByCategory[categoryId]?.title || categoryId;
 }
@@ -266,7 +363,7 @@ function createProductCard(product, categoryId) {
         <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
                 <span data-in-cart-badge class="hidden absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full border border-green-300">In Cart</span>
-                <img src="${product.image}" alt="${product.name}" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
+                <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
                 ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
                 <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">${product.price}</p>
@@ -616,7 +713,9 @@ if (slides) {
         showSlide(index);
     }, 3000);
 }
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for sheet products to be ready (best-effort)
+    try { await (window.KIWI_PRODUCTS_READY || Promise.resolve()); } catch {}
     if (!window.SKIP_INIT) {
         initializeProductSections();
         // Add no results message if it doesn't exist
