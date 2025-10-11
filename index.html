@@ -313,8 +313,8 @@
   <nav id="sideMenu"
     class="fixed top-0 left-0 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
     <div class="flex justify-between items-center p-4 border-b">
-      <span class="font-bold text-xl">📂 Categories</span>
-      <button id="closeMenu" class="text-2xl hover:text-red-500">✖</button>
+      <span class="font-bold text-xl">Categories</span>
+      <button id="closeMenu" class="text-2xl hover:text-red-500">✕</button>
     </div>
     <div id="sideMenuScroll" class="overflow-y-auto h-[calc(100%-56px)]">
       
@@ -447,8 +447,21 @@
   <!-- Transparent Overlay -->
   <div id="overlay" class="hidden fixed inset-0 bg-transparent z-40"></div>
 
-  <!-- JS -->
+      <!-- JS -->
+  <script>
+    window.SKIP_INIT = false;
+    window.SHEET_API = 'https://script.google.com/macros/s/AKfycbyItRYxjUwQj56JUotaVDEq_8tNxbJujpgAatimV3kjEjSX5MiVMvvGH9ioEoZTRmcl/exec';
+  </script>
   <script src="script.js"></script>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -94,7 +94,7 @@
 
   <script>
     function parsePrice(p) {
-      // prices come like "₹1299"; strip non-digits
+      // prices come like "â‚¹1299"; strip non-digits
       const n = String(p || '').replace(/[^0-9.]/g, '');
       return Number(n || 0);
     }
@@ -209,7 +209,7 @@
 
     // Configure your Google Apps Script Web App URL here
 
-    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyTsXL8VMzH9rsamp1LP0ra8sP4fffGTiqXhOGjvqrS1TA_0cA-8VDYQ2hMpdfSQXSD/exec';
+    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzdn_4BWpKTPsSXWxNhiEjzT-kDi2dJjGfzecvQPM5HXn_jhd_yQRMxGnxibS-kLZ64/exec';
 
     function openOrderModal() {
       orderModal.classList.remove('hidden');
@@ -319,12 +319,29 @@
       const columnsV2 = ['Date','Name','Address','Mobile Number','Item Name','Catergory','Unit Price','Quantity','Order Total'];
 
       // Keep old structure for backward compatibility, but include new fields preferred for Sheets
+      // Plus layout hints for Sheets (merge and widths)
       const payload = { 
         date: dateOnly, // previously ISO; now date-only
         name, mobile, address, subtotal, shipping, total, items,
         format: 'flat_v2',
         columnsV2,
-        rowsV2
+        rowsV2,
+        // Ask Apps Script to merge these columns vertically per order group
+        mergeColumnsV2: ['Date', 'Order Total'],
+        // One group equals this order's rows; Sheets script can use this to merge the last N rows
+        mergeGroupsV2: [ { span: cart.length, columns: ['Date','Order Total'] } ],
+        // Suggest wider default widths (in pixels) for better readability
+        columnWidthsV2: {
+          'Date': 100,
+          'Name': 150,
+          'Address': 200,
+          'Mobile Number': 150,
+          'Item Name': 200,
+          'Catergory': 120,
+          'Unit Price': 100,
+          'Quantity': 80,
+          'Order Total': 120
+        }
       };
 
       // Disable actions while sending
@@ -378,3 +395,8 @@
   </script>
 </body>
 </html>
+
+
+
+
+
