@@ -12,5 +12,3 @@ window.FIREBASE_CONFIG = {
 window.FIREBASE_CONFIG = window.FIREBASE_CONFIG || null; // set to your config object
 // c:/Users/crecom/Desktop/kiwi_telecom/config.js
 window.ADMIN_PASS = 'kiwi@123';
-// Set your Apps Script Web App URL here
-window.APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMhdnHB9o1UnW7GQWOZyPrkktegyRRTpb3eVQsYMSHsjHkpA1WBGGoaHjlHQoqYImi/exec';

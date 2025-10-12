@@ -33,7 +33,6 @@ const productsByCategory = {
                 price: '₹399',
                 image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png'
             }
-
         ]
     },
     'earbuds': {
@@ -351,7 +350,7 @@ async function loadProductsFromBackend() {
         const snap = await db.collection('products').where('hidden', '==', false).get().catch(async (err) => {
             // If no field/where error or missing index, fallback to full collection and local filter
             const s2 = await db.collection('products').get();
-            return { docs: s2.docs, fallback: true };
+            return { docs: s2.docs };
         });
         const items = (snap.docs || []).map(d => ({ id: d.id, ...(d.data() || {}) }));
         const normalized = items.map(row => {
@@ -364,7 +363,7 @@ async function loadProductsFromBackend() {
             const hidden = !!row.hidden;
             if (!name || !price || !image || !categoryId) return null;
             return { id: row.id, name, price, image, description, categoryId, hidden };
-        }).filter(Boolean).filter(p => !p.hidden);
+        }).filter(Boolean);
         if (normalized.length) {
             mergeBackendProducts(normalized);
         }
@@ -393,76 +392,10 @@ function getSafeImageUrl(url) {
     } catch { return url; }
 }
 
-// Admin session check
-function isAdmin() {
-    try { return sessionStorage.getItem('kiwi_admin') === '1'; } catch { return false; }
-}
-
-// Lazy Firestore init for storefront actions
-let KIWI_DB = null;
-async function getFirestoreDb() {
-    if (!window.FIREBASE_CONFIG) return null;
-    if (KIWI_DB) return KIWI_DB;
-    if (!window.firebase || !firebase.firestore) {
-        await loadScript('https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js');
-        await loadScript('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js');
-    }
-    const app = firebase.apps?.length ? firebase.app() : firebase.initializeApp(window.FIREBASE_CONFIG);
-    KIWI_DB = firebase.firestore(app);
-    return KIWI_DB;
-}
-
-// Admin Hide/Delete handlers for storefront cards (backend items only)
-function setupAdminCardActions() {
-    if (!isAdmin()) return;
-    document.addEventListener('click', async (e) => {
-        const btn = e.target.closest('[data-admin-act]');
-        if (!btn) return;
-        const card = btn.closest('.product-card');
-        const id = card?.getAttribute('data-pid');
-        const act = btn.getAttribute('data-admin-act');
-        if (!id) { alert('This item is static and cannot be managed here. Use Admin page.'); return; }
-        const db = await getFirestoreDb();
-        if (!db) { alert('Admin backend not configured. Add FIREBASE_CONFIG in config.js'); return; }
-        try {
-            if (act === 'delete') {
-                if (!confirm('Remove this product from storefront? This deletes it from backend.')) return;
-                await db.collection('products').doc(id).delete();
-                card?.remove();
-            } else if (act === 'hide') {
-                await db.collection('products').doc(id).update({ hidden: true });
-                card?.remove();
-            } else if (act === 'unhide') {
-                await db.collection('products').doc(id).update({ hidden: false });
-            }
-        } catch (err) {
-            alert(err?.message || String(err));
-        }
-    });
-}
-
-// Local hide overrides for static (hardcoded) items
-function getHiddenStaticMap(){
-    try { return JSON.parse(localStorage.getItem('kiwi_hidden_static') || '{}'); } catch { return {}; }
-}
-function isStaticHidden(cat, name){
-    const key = `${String(cat||'').toLowerCase()}|||${String(name||'').toLowerCase()}`;
-    const m = getHiddenStaticMap();
-    return !!m[key];
-}
-
 // Function to create a product card
 function createProductCard(product, categoryId) {
-    const isSingle = (window.KIWI_SINGLE_CATEGORY || '') === categoryId;
-    const cardWidthCls = isSingle ? 'w-full' : 'flex-shrink-0 w-56 sm:w-64 snap-start';
-    const adminControls = (isAdmin() && product.id)
-        ? `<div class=\"mt-2 w-full flex gap-1 justify-end\">
-                <button data-admin-act=\"hide\" class=\"px-2 py-1 text-[11px] rounded bg-yellow-100 text-yellow-800\">Hide</button>
-                <button data-admin-act=\"delete\" class=\"px-2 py-1 text-[11px] rounded bg-red-100 text-red-800\">Remove</button>
-           </div>`
-        : '';
     return `
-        <div class="product-card ${cardWidthCls}" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}" ${product.id ? `data-pid="${product.id}"` : ''}>
+        <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
                 <span data-in-cart-badge class="hidden absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full border border-green-300">In Cart</span>
                 <img src="${getSafeImageUrl(product.image)}" alt="${product.name}" loading="lazy" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4" onerror="this.onerror=null;this.src='images/logo.png';">
@@ -487,30 +420,12 @@ function createProductCard(product, categoryId) {
                         Buy Now
                     </button>
                 </div>
-                ${adminControls}
             </div>
         </div>`;
 }
 
 // Function to create a category section
 function createCategorySection(categoryId, categoryData) {
-    const visibleProducts = (categoryData.products || []).filter(p => {
-        // For static (no id) items, respect local override
-        if (!p.id && isStaticHidden(categoryId, p.name||'')) return false;
-        return true;
-    });
-    const isSingle = (window.KIWI_SINGLE_CATEGORY || '') === categoryId;
-    if (isSingle){
-        return `
-        <div class="px-4 py-6 product-section">
-            <h2 class="section-header text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
-            <div id="${categoryId}Container" class="pb-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-2" id="${categoryId}Track">
-                    ${visibleProducts.map(p => createProductCard(p, categoryId)).join('')}
-                </div>
-            </div>
-        </div>`;
-    }
     return `
         <div class="px-4 py-6 product-section">
             <h2 class="section-header text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
@@ -530,7 +445,7 @@ function createCategorySection(categoryId, categoryData) {
                 <!-- Scrollable Container -->
                 <div id="${categoryId}Container" class="overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar">
                     <div class="flex space-x-4 px-2" id="${categoryId}Track">
-                        ${visibleProducts.map(p => createProductCard(p, categoryId)).join('')}
+                        ${categoryData.products.map(p => createProductCard(p, categoryId)).join('')}
                     </div>
                 </div>
             </div>
@@ -662,26 +577,19 @@ function setupCategoryScroll(categoryId) {
 
 // Initialize all category sections
 function initializeProductSections() {
-    const host = document.querySelector('#catHost') || document.body;
-    const single = (window.KIWI_SINGLE_CATEGORY || '').trim();
-    const order = [ 'dataCables', 'chargers', 'earphones', 'earbuds', 'neckbands', 'speakers', 'powerbankCables', 'batteries', 'powerbanks' ];
-
-    if (single && productsByCategory[single]){
-        const merged = { title: getCategoryTitle(single), products: getProducts(single) };
-        const section = document.createElement('div');
-        section.innerHTML = createCategorySection(single, merged);
-        host.appendChild(section);
-        setupCategoryScroll(single);
-        const tt = document.getElementById('catTitle'); if (tt) tt.textContent = merged.title;
-        return;
-    }
-
+    const mainContainer = document.body;
+    const order = [
+        'dataCables', 'chargers', 'earphones', 'earbuds', 'neckbands', 'speakers', 'powerbankCables', 'batteries', 'powerbanks'
+    ];
     order.forEach((categoryId) => {
         if (!productsByCategory[categoryId]) return;
-        const merged = { title: getCategoryTitle(categoryId), products: getProducts(categoryId) };
+        const merged = {
+            title: getCategoryTitle(categoryId),
+            products: getProducts(categoryId)
+        };
         const section = document.createElement('div');
         section.innerHTML = createCategorySection(categoryId, merged);
-        host.appendChild(section);
+        mainContainer.appendChild(section);
         setupCategoryScroll(categoryId);
     });
 }
@@ -887,9 +795,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupSideMenuToggles();
     // Reflect existing cart state on product cards
     updateInCartBadges();
-
-    // Setup admin actions on storefront cards
-    setupAdminCardActions();
 });
 
 // Create floating action buttons for multi-select add/buy

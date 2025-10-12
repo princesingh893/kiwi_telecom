@@ -141,61 +141,6 @@
     </section>
   </main>
 
-  <!-- Edit Product Modal -->
-  <div id="editModal" class="hidden fixed inset-0 z-50 items-center justify-center">
-    <div class="absolute inset-0 bg-black/40"></div>
-    <div class="relative bg-white rounded-lg shadow-xl w-[90%] max-w-lg mx-auto p-5">
-      <h3 class="text-lg font-semibold mb-3">Edit Product</h3>
-      <form id="editForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="hidden" id="eId" />
-        <div>
-          <label class="block text-sm font-medium mb-1">Name</label>
-          <input id="eName" type="text" class="w-full border rounded px-3 py-2" placeholder="Product name" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Price</label>
-          <input id="ePrice" type="text" class="w-full border rounded px-3 py-2" placeholder="₹999" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Image URL</label>
-          <input id="eImage" type="url" class="w-full border rounded px-3 py-2" placeholder="https://..." />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Category</label>
-          <select id="eCategory" class="w-full border rounded px-3 py-2">
-            <option value="">Select category</option>
-            <option value="earbuds">Earbuds</option>
-            <option value="neckbands">Neckbands</option>
-            <option value="earphones">Earphones</option>
-            <option value="speakers">Wireless Speakers</option>
-            <option value="powerbanks">Powerbank</option>
-            <option value="powerbankCables">Powerbank Cables</option>
-            <option value="chargers">Chargers</option>
-            <option value="batteries">Battery</option>
-            <option value="dataCables">Data Cables</option>
-          </select>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium mb-1">Or upload image</label>
-          <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-            <input id="eImageFile" type="file" accept="image/*" class="border rounded px-3 py-2 w-full sm:w-auto" />
-            <button type="button" id="eUploadImageBtn" class="px-3 py-2 bg-gray-100 text-gray-800 rounded">Upload to Storage</button>
-            <span id="eUploadStatus" class="text-sm text-gray-600"></span>
-          </div>
-        </div>
-        <div class="md:col-span-2 flex items-center gap-2">
-          <input id="eHidden" type="checkbox" class="h-4 w-4" />
-          <label for="eHidden" class="text-sm">Hidden</label>
-        </div>
-        <div class="md:col-span-2 flex justify-end gap-2 items-center">
-          <span id="eFormMsg" class="text-sm"></span>
-          <button type="button" id="eCancel" class="px-4 py-2 border rounded">Cancel</button>
-          <button type="submit" id="eSave" class="px-4 py-2 bg-blue-600 text-white rounded">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <script src="config.js"></script>
   <script>
     // Prevent storefront auto init on admin page; we will call rendering manually

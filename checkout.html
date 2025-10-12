@@ -209,7 +209,7 @@
 
     // Configure your Google Apps Script Web App URL here
 
-    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxMhdnHB9o1UnW7GQWOZyPrkktegyRRTpb3eVQsYMSHsjHkpA1WBGGoaHjlHQoqYImi/exec';
+    const APPS_SCRIPT_URL = window.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzdn_4BWpKTPsSXWxNhiEjzT-kDi2dJjGfzecvQPM5HXn_jhd_yQRMxGnxibS-kLZ64/exec';
 
     function openOrderModal() {
       orderModal.classList.remove('hidden');
@@ -327,10 +327,9 @@
         columnsV2,
         rowsV2,
         // Ask Apps Script to merge these columns vertically per order group
-        // Merge order-level fields across the N item rows for this order
-        mergeColumnsV2: ['Date', 'Order Total', 'Name', 'Address', 'Mobile Number'],
+        mergeColumnsV2: ['Date', 'Order Total'],
         // One group equals this order's rows; Sheets script can use this to merge the last N rows
-        mergeGroupsV2: [ { span: cart.length, columns: ['Date','Order Total','Name','Address','Mobile Number'] } ],
+        mergeGroupsV2: [ { span: cart.length, columns: ['Date','Order Total'] } ],
         // Suggest wider default widths (in pixels) for better readability
         columnWidthsV2: {
           'Date': 100,
