@@ -20,6 +20,12 @@
   </header>
 
   <main class="container mx-auto px-4 py-6 space-y-6">
+    <div id="authLoader" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40">
+      <div class="bg-white rounded-lg p-4 shadow flex items-center gap-3">
+        <div class="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-sm">Processing...</span>
+      </div>
+    </div>
     <section class="bg-white p-4 rounded shadow">
       <h2 class="text-lg font-semibold mb-3">Firebase Setup</h2>
       <p class="text-sm text-gray-600">Ensure <code>config.js</code> has <code>window.FIREBASE_CONFIG</code> set. Without it, login and CRUD will be disabled.</p>
