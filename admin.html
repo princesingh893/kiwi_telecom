@@ -20,6 +20,12 @@
   </header>
 
   <main class="container mx-auto px-4 py-6 space-y-6">
+    <div id="authLoader" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40">
+      <div class="bg-white rounded-lg p-4 shadow flex items-center gap-3">
+        <div class="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-sm">Processing...</span>
+      </div>
+    </div>
     <section class="bg-white p-4 rounded shadow">
       <h2 class="text-lg font-semibold mb-3">Firebase Setup</h2>
       <p class="text-sm text-gray-600">Ensure <code>config.js</code> has <code>window.FIREBASE_CONFIG</code> set. Without it, login and CRUD will be disabled.</p>
@@ -97,27 +103,7 @@
       </form>
     </section>
 
-    <section class="bg-white p-4 rounded shadow">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-lg font-semibold">Storefront Products (All)</h2>
-        <div class="text-sm text-gray-500">This shows what the website renders (hardcoded + backend).</div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead>
-            <tr class="border-b">
-              <th class="text-left p-2">Image</th>
-              <th class="text-left p-2">Category</th>
-              <th class="text-left p-2">Name</th>
-              <th class="text-left p-2">Price</th>
-              <th class="text-left p-2">Status</th>
-              <th class="text-left p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="storefrontTable"></tbody>
-        </table>
-      </div>
-    </section>
+    
 
     <section class="bg-white p-4 rounded shadow">
       <div class="flex justify-between items-center mb-3">
@@ -141,12 +127,12 @@
     </section>
   </main>
 
-  <script src="config.js"></script>
+  <script src="config.js" defer></script>
   <script>
     // Prevent storefront auto init on admin page; we will call rendering manually
     window.SKIP_INIT = true;
   </script>
-  <script src="script.js"></script>
-  <script src="admin.js"></script>
+  <script src="script.js" defer></script>
+  <script src="admin.js" defer></script>
 </body>
 </html>

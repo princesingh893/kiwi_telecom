@@ -1,256 +1,22 @@
-// Product data organized by category
+// Product data organized by category (empty shells; admin/backend will populate)
 const productsByCategory = {
-    'dataCables': {
-        title: 'Data Cables',
-        products: [
-            {
-                name: 'Premium Data Cable',
-                price: '₹299',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png'
-            },
-            {
-                name: 'Micro USB Cable',
-                price: '₹199',
-                image: 'https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg'
-            },
-            {
-                name: 'Fast Charger Cable',
-                price: '₹399',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            },
-            {
-                name: 'Braided Nylon Cable',
-                price: '₹349',
-                image: 'https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg'
-            },
-            {
-                name: 'USB C to C Cable',
-                price: '₹449',
-                image: 'https://m.media-amazon.com/images/I/61h+Qf5o3eL._AC_UF1000,1000_QL80_.jpg'
-            },
-            {
-                name: 'Lightning Cable',
-                price: '₹399',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63.png'
-            }
-        ]
-    },
-    'earbuds': {
-        title: 'Earbuds',
-        products: [
-            {
-                name: 'Wireless Earbuds Pro',
-                price: '₹1999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/TWS.png'
-            },
-            {
-                name: 'True Wireless Earbuds',
-                price: '₹2499',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/TWS.png'
-            },
-            {
-                name: 'Sports Earbuds',
-                price: '₹1599',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/TWS.png'
-            },
-            {
-                name: 'Noise Cancelling Earbuds',
-                price: '₹2999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/TWS.png'
-            },
-            {
-                name: 'Budget Earbuds',
-                price: '₹999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/TWS.png'
-            }
-        ]
-    },
-    'neckbands': {
-        title: 'Neckbands',
-        products: [
-            {
-                name: 'Bluetooth Neckband Pro',
-                price: '₹1499',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-63-4.png'
-            },
-            {
-                name: 'Wireless Neckband',
-                price: '₹1799',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-63-4.png'
-            },
-            {
-                name: 'Sports Neckband',
-                price: '₹1299',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-63-4.png'
-            },
-            {
-                name: 'Bass Boost Neckband',
-                price: '₹1999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-63-4.png'
-            }
-        ]
-    },
-    'speakers': {
-        title: 'Speakers',
-        products: [
-            {
-                name: 'Portable Bluetooth Speaker',
-                price: '₹1999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-65-2.png'
-            },
-            {
-                name: 'Wireless Speaker Pro',
-                price: '₹2999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-65-2.png'
-            },
-            {
-                name: 'Mini Speaker',
-                price: '₹999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-65-2.png'
-            },
-            {
-                name: 'Waterproof Speaker',
-                price: '₹2499',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-65-2.png'
-            },
-            {
-                name: 'Party Speaker',
-                price: '₹3999',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-65-2.png'
-            }
-        ]
-    },
-    'powerbankCables': {
-        title: 'Powerbank Cables',
-        products: [
-            {
-                name: 'Powerbank Cable Set',
-                price: '₹499',
-                image: 'https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg'
-            },
-            {
-                name: 'Fast Charge Cable',
-                price: '₹399',
-                image: 'https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg'
-            },
-            {
-                name: 'Multi-Port Cable',
-                price: '₹599',
-                image: 'https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg'
-            },
-            {
-                name: 'Braided Power Cable',
-                price: '₹449',
-                image: 'https://images-cdn.ubuy.co.in/6607b41f17bd0c55404bb888-0-5ft-micro-usb-cable-6-inch-short.jpg'
-            }
-        ]
-    },
-    'batteries': {
-        title: 'Batteries',
-        products: [
-            {
-                name: 'AA Batteries (4 Pack)',
-                price: '₹199',
-                image: 'https://wallpapers.com/images/hd/two-blue-batteries-digital-art-ocd0wqv13iqit9wg.jpg'
-            },
-            {
-                name: 'AAA Batteries (4 Pack)',
-                price: '₹179',
-                image: 'https://wallpapers.com/images/hd/two-blue-batteries-digital-art-ocd0wqv13iqit9wg.jpg'
-            },
-            {
-                name: 'Rechargeable Battery Kit',
-                price: '₹899',
-                image: 'https://wallpapers.com/images/hd/two-blue-batteries-digital-art-ocd0wqv13iqit9wg.jpg'
-            },
-            {
-                name: 'Button Cell Batteries',
-                price: '₹149',
-                image: 'https://wallpapers.com/images/hd/two-blue-batteries-digital-art-ocd0wqv13iqit9wg.jpg'
-            }
-        ]
-    },
-    'powerbanks': {
-        title: 'Powerbanks',
-        products: [
-            {
-                name: '10000mAh Powerbank',
-                price: '₹1299',
-                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
-            },
-            {
-                name: '20000mAh Powerbank',
-                price: '₹1999',
-                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
-            },
-            {
-                name: '5000mAh Mini Powerbank',
-                price: '₹899',
-                image: "https://m.media-amazon.com/images/I/61iJUdK1iWL._SL1500_.jpg"
-            }
-        ]
-    },
-    'earphones': {
-        title: 'Earphones',
-        products: [
-            {
-                name: 'Bass Boost Earphones',
-                price: '₹699',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            },
-            {
-                name: 'Noise Cancelling Earphones',
-                price: '₹1299',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            },
-            {
-                name: 'Sports Earphones',
-                price: '₹899',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            },
-            {
-                name: 'In-Ear Earphones',
-                price: '₹499',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            },
-            {
-                name: 'Studio Earphones',
-                price: '₹1599',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/05/Group-66-1.png'
-            }
-        ]
-    },
-    'chargers': {
-        title: 'Chargers',
-        products: [
-            {
-                name: 'Fast Charger 18W',
-                price: '₹599',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63-2-1.png'
-            },
-            {
-                name: 'Wall Adapter',
-                price: '₹349',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63-2-1.png'
-            },
-            {
-                name: 'Car Charger',
-                price: '₹499',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63-2-1.png'
-            },
-            {
-                name: 'Multi-Port Charger',
-                price: '₹799',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63-2-1.png'
-            },
-            {
-                name: 'Wireless Charger',
-                price: '₹1299',
-                image: 'https://kdmindia.in/wp-content/uploads/2024/07/Group-63-2-1.png'
-            }
-        ]
-    }
+  dataCables: { title: 'Data Cables', products: [] },
+  chargers: { title: 'Chargers', products: [] },
+  earphones: { title: 'Earphones', products: [] },
+  earbuds: { title: 'Earbuds', products: [] },
+  neckbands: { title: 'Neckbands', products: [] },
+  speakers: { title: 'Speakers', products: [] },
+  powerbankCables: { title: 'Powerbank Cables', products: [] },
+  batteries: { title: 'Batteries', products: [] },
+  powerbanks: { title: 'Powerbanks', products: [] },
 };
+
+// Set a safe fallback logo path that works for both index.html and components/*.html
+try {
+  window.KIWI_FALLBACK_LOGO = (window.location.pathname || '').toLowerCase().includes('/components/')
+    ? '../images/logo.png'
+    : 'images/logo.png';
+} catch {}
 
 // ---------------- Dynamic Backend Integration (Firebase optional) ----------------
 // Normalize category names to our internal category IDs
@@ -285,6 +51,108 @@ function normalizeCategoryId(raw) {
         'powerbank': 'powerbanks'
     };
     return map[s] || (CATEGORY_IDS.has(s) ? s : '');
+}
+
+// Realtime listener for a single category page (components/*)
+function startRealtimeCategoryPage(categoryId, gridElId = 'productsGrid') {
+    try {
+        if (!window.FIREBASE_CONFIG) return;
+        if (!window.firebase) return;
+        const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(window.FIREBASE_CONFIG);
+        const db = firebase.firestore();
+        const q = db.collection('products');
+        q.onSnapshot((snap) => {
+            try {
+                const items = [];
+                snap.forEach(doc => {
+                    const d = doc.data() || {};
+                    const name = String(d.name || '').trim();
+                    const price = String(d.price || '').trim();
+                    const image = String(d.image || '').trim();
+                    const rawCat = String(d.categoryId || d.category || '').trim();
+                    const cat = normalizeCategoryId(rawCat);
+                    const description = String(d.description || '').trim();
+                    const hidden = !!d.hidden;
+                    if (!name || !price || !image || !cat) return;
+                    if (hidden) return;
+                    if (cat === categoryId) items.push({ id: doc.id, name, price, image, description, categoryId: cat, hidden });
+                });
+                const grid = document.getElementById(gridElId);
+                if (!grid) return;
+                if (!items.length) {
+                    grid.innerHTML = `
+                      <div class="col-span-full text-center py-10 text-gray-500">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-lg font-medium text-gray-900">No products found</h3>
+                        <p class="mt-1 text-gray-500">We couldn't find any products in this category yet.</p>
+                      </div>
+                    `;
+                } else {
+                    grid.innerHTML = items.map(p => createProductCard(p, categoryId)).join('');
+                }
+                updateInCartBadges();
+            } catch (e) {
+                console.warn('Realtime category update failed:', e?.message || e);
+            }
+        }, (err) => {
+            console.warn('Realtime category listener error:', err?.message || err);
+        });
+    } catch (e) {
+        console.warn('Failed to start realtime category page:', e?.message || e);
+    }
+}
+
+// Re-render helper: clear current product sections and rebuild
+function rerenderAllProductSections() {
+    try {
+        document.querySelectorAll('.product-section').forEach(el => el.parentElement?.remove());
+    } catch {}
+    initializeProductSections();
+    updateInCartBadges();
+}
+
+// Start Firestore realtime subscription (if Firebase SDK and config are present)
+function startRealtimeProducts() {
+    try {
+        if (!window.FIREBASE_CONFIG) return; // no config
+        if (!window.firebase) return; // SDK not loaded on storefront
+        // Initialize app if needed (compat SDK)
+        const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(window.FIREBASE_CONFIG);
+        const db = firebase.firestore();
+        // Listen only to visible products
+        const q = db.collection('products');
+        // Keep local snapshot and update UI on change
+        q.onSnapshot((snap) => {
+            try {
+                const items = [];
+                snap.forEach(doc => {
+                    const d = doc.data() || {};
+                    const name = String(d.name || '').trim();
+                    const price = String(d.price || '').trim();
+                    const image = String(d.image || '').trim();
+                    const rawCat = String(d.categoryId || d.category || '').trim();
+                    const categoryId = normalizeCategoryId(rawCat);
+                    const description = String(d.description || '').trim();
+                    const hidden = !!d.hidden;
+                    if (!name || !price || !image || !categoryId) return;
+                    if (hidden) return;
+                    items.push({ id: doc.id, name, price, image, description, categoryId, hidden });
+                });
+                // Reset current category lists, then merge from backend
+                Object.keys(productsByCategory).forEach(k => { productsByCategory[k].products = []; });
+                if (items.length) mergeBackendProducts(items);
+                rerenderAllProductSections();
+            } catch (e) {
+                console.warn('Realtime update failed:', e?.message || e);
+            }
+        }, (err) => {
+            console.warn('Realtime listener error:', err?.message || err);
+        });
+    } catch (e) {
+        console.warn('Failed to start realtime products:', e?.message || e);
+    }
 }
 
 function pickKey(obj, keys) {
@@ -398,7 +266,7 @@ function createProductCard(product, categoryId) {
         <div class="product-card flex-shrink-0 w-56 sm:w-64 snap-start" data-name="${(product.name || '').toLowerCase()}" data-category="${categoryId}">
             <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
                 <span data-in-cart-badge class="hidden absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full border border-green-300">In Cart</span>
-                <img src="${getSafeImageUrl(product.image)}" alt="${product.name}" loading="lazy" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4" onerror="this.onerror=null;this.src='images/logo.png';">
+                <img src="${getSafeImageUrl(product.image)}" alt="${product.name}" loading="lazy" fetchpriority="low" decoding="async" class="h-36 sm:h-40 w-full object-contain mb-3 sm:mb-4" onerror="this.onerror=null;this.src=window.KIWI_FALLBACK_LOGO;">
                 <h3 class="font-semibold text-gray-800 text-center text-sm sm:text-base">${product.name}</h3>
                 ${product.description ? `<p class=\"text-gray-600 text-xs sm:text-sm text-center mt-1\">${product.description}</p>` : ''}
                 <p class="text-blue-600 font-bold text-base sm:text-lg my-1 sm:my-2">${product.price}</p>
@@ -427,7 +295,7 @@ function createProductCard(product, categoryId) {
 // Function to create a category section
 function createCategorySection(categoryId, categoryData) {
     return `
-        <div class="px-4 py-6 product-section">
+        <div class="px-4 py-6 product-section" style="content-visibility:auto;contain-intrinsic-size:1px 420px;">
             <h2 class="section-header text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
             <div class="relative group">
                 <!-- Scroll buttons -->
@@ -587,6 +455,7 @@ function initializeProductSections() {
             title: getCategoryTitle(categoryId),
             products: getProducts(categoryId)
         };
+        if (!merged.products || merged.products.length === 0) return; // skip empty categories
         const section = document.createElement('div');
         section.innerHTML = createCategorySection(categoryId, merged);
         mainContainer.appendChild(section);
@@ -772,6 +641,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         // Initialize search after sections are mounted
         setupSearch();
+        // Start realtime updates (no refresh needed) if Firebase is available
+        startRealtimeProducts();
 
     }
     // Ensure stable styles for floating action buttons across breakpoints

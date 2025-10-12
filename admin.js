@@ -156,37 +156,47 @@
 
     function showAuthError(msg){ if (!els.authError) return; els.authError.textContent = msg; els.authError.classList.remove('hidden'); }
     function clearAuthError(){ if (!els.authError) return; els.authError.textContent = ''; els.authError.classList.add('hidden'); }
+    const authLoaderEl = document.getElementById('authLoader');
+    function setAuthLoading(on){
+      if (!authLoaderEl) return;
+      if (on){ authLoaderEl.classList.remove('hidden'); authLoaderEl.classList.add('flex'); }
+      else { authLoaderEl.classList.add('hidden'); authLoaderEl.classList.remove('flex'); }
+    }
 
     async function handleLogin(){
       clearAuthError();
       const email = (els.email?.value || '').trim();
       const pass = (els.pass?.value || '').trim();
       if (!email || !pass){ showAuthError('Please enter email and password.'); return; }
+      setAuthLoading(true);
       try { await auth.signInWithEmailAndPassword(email, pass); }
       catch (e){
         const code = e?.code ? ` (${e.code})` : '';
         showAuthError(`${e?.message || String(e)}${code}`);
         console.error('Auth login error:', e);
-      }
+      } finally { setAuthLoading(false); }
     }
 
     async function handleReset(){
       clearAuthError();
       const email = (els.email?.value || '').trim();
       if (!email){ showAuthError('Enter your email, then click Reset Password.'); return; }
+      setAuthLoading(true);
       try { await auth.sendPasswordResetEmail(email); showAuthError('Reset email sent (check inbox/spam).'); }
       catch (e){
         const code = e?.code ? ` (${e.code})` : '';
         showAuthError(`${e?.message || String(e)}${code}`);
         console.error('Auth reset error:', e);
-      }
+      } finally { setAuthLoading(false); }
     }
 
     els.doLogin?.addEventListener('click', handleLogin);
     els.doReset?.addEventListener('click', handleReset);
     els.loginBtn?.addEventListener('click', handleLogin);
     els.logoutBtn.addEventListener('click', async () => {
+      setAuthLoading(true);
       try { await auth.signOut(); } catch (e){ alert(e.message || e); }
+      finally { setAuthLoading(false); }
     });
 
     // Upload image to Firebase Storage
