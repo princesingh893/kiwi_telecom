@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Category - KIWI Telecom</title>
+  <link rel="stylesheet" href="../src/output.css" />
+</head>
+<body class="bg-gray-50 text-gray-900 max-w-[1400px] mx-auto font-sans">
+  <header class="flex items-center justify-between px-6 py-4 bg-white shadow-md sticky top-0 z-40">
+    <a href="../index.html" class="text-blue-600 font-semibold">← Back</a>
+    <h1 id="catTitle" class="text-lg font-bold">Category</h1>
+    <span></span>
+  </header>
+
+  <main id="catHost" class="min-h-[60vh]"></main>
+
+  <script>
+    // Indicate we want to render a single category using ?cat=
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const cat = params.get('cat') || '';
+      window.KIWI_SINGLE_CATEGORY = cat;
+    })();
+  </script>
+  <script src="../config.js"></script>
+  <script>
+    // Allow normal init; script.js will detect KIWI_SINGLE_CATEGORY
+    window.SKIP_INIT = false;
+  </script>
+  <script src="../script.js"></script>
+</body>
+</html>
