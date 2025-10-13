@@ -62,14 +62,15 @@
     
     /* Responsive adjustments */
     @media (max-width: 640px) {
-      .flex-shrink-0 {
-        width: 220px;
+      .product-card.flex-shrink-0 {
+        width: 100% !important;
       }
     }
 
     /* Product section styles */
     .product-section {
       position: relative;
+      margin: 0.5rem 0; /* tighter vertical spacing between sections */
     }
 
     .scroll-btn {
@@ -225,6 +226,19 @@
       color: #9ca3af;
       pointer-events: none;
     }
+    /* Tighter bottom space for Chargers section */
+    .product-section[data-category="chargers"] {
+      margin-bottom: 0.25rem;
+      padding-bottom: 0.5rem;
+    }
+    /* Slightly smaller header spacing in Chargers */
+    .product-section[data-category="chargers"] .section-header {
+      margin-bottom: 0.5rem;
+    }
+    /* Reduce bottom padding of the horizontal scroller for Chargers */
+    .product-section[data-category="chargers"] #chargersContainer {
+      padding-bottom: 0.5rem;
+    }
   </style>
   <link rel="stylesheet" href="src/output.css">
   <!-- Performance: preconnect/dns-prefetch to external assets -->
@@ -242,7 +256,7 @@
 
 <body class="bg-gray-50 text-gray-900 max-w-[1400px] mx-auto font-sans">
   <!-- Header -->
-  <header class="flex items-center justify-between px-8 py-4 bg-white shadow-md sticky top-0 z-40">
+  <header class="flex items-center justify-between px-6 py-2 bg-white shadow-md sticky top-0 z-40">
     <button id="menuBtn" class="text-3xl hover:text-blue-600 transition">☰</button>
     <div class="flex items-center gap-4">
       <img src="images/logo.png" alt="Logo" class="h-12">
@@ -251,7 +265,7 @@
   </header>
 
  <!-- Advanced Search -->
- <section class="px-4 sm:px-6 lg:px-8 py-4 bg-white/70 backdrop-blur sticky top-[64px] z-30">
+ <section class="px-4 sm:px-6 lg:px-8 py-1 bg-white/70 backdrop-blur sticky top-[64px] z-30">
   <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
     <div class="flex-1 flex items-center gap-2">
       <div class="relative flex-1">
@@ -335,11 +349,11 @@
       
       <div class="container mx-auto max-w-6xl p-4  sm:p-4 lg:p-1 lg:px-10">
 
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-4">
           <h2 class="text-lg font-bold tracking-wider text-gray-800 uppercase">PRODUCTS</h2>
         </div>
 
-        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-1 gap-y-8">
+        <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-1 gap-y-3">
 
           <a href="components/earbuds.html" class="flex flex-col items-center text-center group">
             <div
@@ -481,8 +495,6 @@
   <script>
     window.SKIP_INIT = false;
   </script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js" defer></script>
   <script src="config.js" defer></script>
   <script src="script.js" defer></script>
   <script>

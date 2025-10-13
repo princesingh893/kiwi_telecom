@@ -101,6 +101,7 @@
       </td>
       <td class="p-2">${d.hidden ? '<span class="tag bg-red-100 text-red-700">Hidden</span>' : '<span class="tag bg-green-100 text-green-700">Visible</span>'}</td>
       <td class="p-2 text-right space-x-2">
+        <button data-act="edit" data-id="${id}" class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Edit</button>
         <button data-act="toggle" data-id="${id}" class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">${d.hidden ? 'Unhide' : 'Hide'}</button>
         <button data-act="delete" data-id="${id}" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Delete</button>
       </td>
@@ -216,15 +217,26 @@
       } catch (e){ uploadStatus.textContent = (e?.message || String(e)); }
     });
 
-    // Save product
+    // Save / Update product
     els.form.addEventListener('submit', async (ev) => {
       ev.preventDefault(); els.formMsg.textContent = '';
       const p = captureForm();
       if (!validProduct(p)) { els.formMsg.textContent = 'Please fill all fields with valid values.'; els.formMsg.className='text-red-700'; return; }
       try {
-        await db.collection('products').add(p);
+        const editId = els.form?.dataset?.editId;
+        if (editId) {
+          const upd = { ...p, updatedAt: Date.now() };
+          // Do not overwrite createdAt on update
+          delete upd.createdAt;
+          await db.collection('products').doc(editId).update(upd);
+          els.formMsg.textContent = 'Updated!'; els.formMsg.className='text-green-700';
+        } else {
+          await db.collection('products').add(p);
+          els.formMsg.textContent = 'Saved!'; els.formMsg.className='text-green-700';
+        }
         els.form.reset();
-        els.formMsg.textContent = 'Saved!'; els.formMsg.className='text-green-700';
+        if (els.form?.dataset) delete els.form.dataset.editId;
+        if (els.save) els.save.textContent = 'Save Product';
         refreshList();
       } catch (e){ els.formMsg.textContent = e.message || String(e); els.formMsg.className='text-red-700'; }
     });
@@ -235,6 +247,18 @@
       const id = btn.getAttribute('data-id'); const act = btn.getAttribute('data-act');
       if (!id || !act) return;
       try {
+        if (act === 'edit'){
+          const doc = await db.collection('products').doc(id).get();
+          const d = doc.data() || {};
+          if (els.name) els.name.value = d.name || '';
+          if (els.price) els.price.value = d.price || '';
+          if (els.image) els.image.value = d.image || '';
+          if (els.category) els.category.value = d.categoryId || '';
+          if (els.form) els.form.dataset.editId = id;
+          if (els.save) els.save.textContent = 'Update Product';
+          if (els.formMsg) { els.formMsg.textContent = 'Editing existing product...'; els.formMsg.className = 'text-blue-700'; }
+          return;
+        }
         if (act === 'delete'){
           if (!confirm('Delete this product?')) return;
           await db.collection('products').doc(id).delete();
@@ -275,7 +299,8 @@
             const fromBackend = !!item.id;
             const status = fromBackend ? 'Visible' : 'Visible (static)';
             const actions = fromBackend
-              ? `<button data-sact="toggle" data-sid="${item.id}" class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Hide</button>
+              ? `<button data-sact="edit" data-sid="${item.id}" class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Edit</button>
+                 <button data-sact="toggle" data-sid="${item.id}" class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Hide</button>
                  <button data-sact="delete" data-sid="${item.id}" class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Delete</button>`
               : '<span class="text-xs text-gray-400">Static</span>';
             tr.innerHTML = `
@@ -292,22 +317,7 @@
       }
     }
 
-    // Actions on storefront rows (only for backend items)
-    document.getElementById('storefrontTable')?.addEventListener('click', async (ev) => {
-      const btn = ev.target.closest('button'); if (!btn) return;
-      const id = btn.getAttribute('data-sid'); const act = btn.getAttribute('data-sact');
-      if (!id || !act) return;
-      try {
-        if (act === 'delete'){
-          if (!confirm('Delete this product?')) return;
-          await db.collection('products').doc(id).delete();
-        } else if (act === 'toggle'){
-          const doc = await db.collection('products').doc(id).get();
-          const cur = doc.data() || {}; await db.collection('products').doc(id).update({ hidden: !cur.hidden });
-        }
-        refreshList();
-      } catch (e){ alert(e.message || e); }
-    });
+    document.addEventListener('DOMContentLoaded', main);
   }
 
   document.addEventListener('DOMContentLoaded', main);

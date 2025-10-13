@@ -18,6 +18,19 @@ try {
     : 'images/logo.png';
 } catch {}
 
+// Defer starting realtime to avoid blocking initial render
+function scheduleRealtimeInit() {
+    try {
+        if (typeof requestIdleCallback === 'function') {
+            requestIdleCallback(() => { try { startRealtimeProducts(); } catch {} }, { timeout: 2000 });
+        } else {
+            setTimeout(() => { try { startRealtimeProducts(); } catch {} }, 1200);
+        }
+    } catch {
+        setTimeout(() => { try { startRealtimeProducts(); } catch {} }, 1200);
+    }
+}
+
 // ---------------- Dynamic Backend Integration (Firebase optional) ----------------
 // Normalize category names to our internal category IDs
 const CATEGORY_IDS = new Set([
@@ -295,7 +308,7 @@ function createProductCard(product, categoryId) {
 // Function to create a category section
 function createCategorySection(categoryId, categoryData) {
     return `
-        <div class="px-4 py-6 product-section" style="content-visibility:auto;contain-intrinsic-size:1px 420px;">
+        <div class="px-4 py-6 product-section" data-category="${categoryId}" style="content-visibility:auto;contain-intrinsic-size:1px 420px;">
             <h2 class="section-header text-xl font-bold text-gray-800 mb-4 px-2">${categoryData.title}</h2>
             <div class="relative group">
                 <!-- Scroll buttons -->
@@ -488,6 +501,8 @@ function updateInCartBadges() {
                 }
             }
         });
+        // Initialize visibility based on current selections (if any)
+        updateFloatingVisibility();
     } catch {}
 }
 
@@ -496,7 +511,7 @@ function setupSearch() {
     const input = document.getElementById('searchInput');
     const select = document.getElementById('searchCategory');
     const clearBtn = document.getElementById('clearSearch');
-    const productSections = document.querySelectorAll('.product-section');
+    // Do NOT cache sections; they can be re-rendered by realtime updates
 
     if (!input || !select || !clearBtn) return; // Exit if elements not found
 
@@ -504,8 +519,8 @@ function setupSearch() {
         const searchTerm = input.value.trim().toLowerCase();
         const category = select.value;
         let anyVisible = false;
-
-        productSections.forEach(section => {
+        const productSectionsNow = document.querySelectorAll('.product-section');
+        productSectionsNow.forEach(section => {
             const products = section.querySelectorAll('.product-card');
             let sectionHasVisibleProducts = false;
 
@@ -516,11 +531,12 @@ function setupSearch() {
                 const matchesCategory = !category || productCategory === category || category === 'all';
                 const isVisible = matchesSearch && matchesCategory;
                 
-                product.style.display = isVisible ? 'block' : 'none';
+                // Use empty string to restore default display instead of forcing block
+                product.style.display = isVisible ? '' : 'none';
                 if (isVisible) sectionHasVisibleProducts = true;
                 anyVisible = anyVisible || isVisible;
             });
-            section.style.display = sectionHasVisibleProducts ? 'block' : 'none';
+            section.style.display = sectionHasVisibleProducts ? '' : 'none';
         });
 
         // Show/hide no results message
@@ -641,8 +657,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         // Initialize search after sections are mounted
         setupSearch();
-        // Start realtime updates (no refresh needed) if Firebase is available
-        startRealtimeProducts();
+        // Start realtime updates later (idle) if Firebase is available
+        scheduleRealtimeInit();
 
     }
     // Ensure stable styles for floating action buttons across breakpoints
@@ -656,6 +672,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 #kiwi-floating-spacer { height: 5.5rem; }
             `;
             document.head.appendChild(style);
+        }
+        if (!document.getElementById('kiwi-product-height')) {
+            const hStyle = document.createElement('style');
+            hStyle.id = 'kiwi-product-height';
+            hStyle.textContent = `
+                .product-card img { height: calc(9rem + 30px) !important; }
+                @media (min-width: 640px) { .product-card img { height: calc(10rem + 30px) !important; } }
+            `;
+            document.head.appendChild(hStyle);
+        }
+        if (!document.getElementById('kiwi-last-section-margin')) {
+            const mStyle = document.createElement('style');
+            mStyle.id = 'kiwi-last-section-margin';
+            mStyle.textContent = `
+                .product-section:last-of-type { margin-bottom: 40px; }
+            `;
+            document.head.appendChild(mStyle);
         }
     } catch {}
 
@@ -697,6 +730,7 @@ function createFloatingButtons() {
                 }
                 // Update badges and states
                 updateInCartBadges();
+                updateFloatingVisibility();
             });
             document.body.appendChild(addBtn);
         }
@@ -984,3 +1018,27 @@ function addSelectedToCart(options = {}) {
     });
     return { addedCount, skippedNames, selectedCount };
 }
+
+// Keep floating buttons visible; function retained for compatibility but does not hide buttons
+function updateFloatingVisibility() {
+    try {
+        const addBtn = document.getElementById('addSelectedBtn');
+        const buyBtn = document.getElementById('buySelectedBtn');
+        if (addBtn) addBtn.style.display = '';
+        if (buyBtn) buyBtn.style.display = '';
+    } catch {}
+}
+
+// React to selection changes and to dynamic re-renders
+document.addEventListener('change', (e) => {
+    const cb = e.target;
+    if (!(cb instanceof Element)) return;
+    if (cb.matches('[data-select]')) {
+        updateFloatingVisibility();
+    }
+});
+
+// Also update on DOMContentLoaded once initial sections render
+document.addEventListener('DOMContentLoaded', () => {
+    updateFloatingVisibility();
+});
